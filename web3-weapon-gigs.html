@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Weapon — Browse Gigs</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#02040a;--deep:#050d1f;--dark:#0a1628;
+  --purple:#8b30ff;--purple2:#a855f7;--cyan:#00f5ff;--cyan2:#00c8d4;
+  --white:#f0f4ff;--grey:#8899bb;--grey2:#4a5568;
+  --border:rgba(0,245,255,0.1);--bpurple:rgba(139,48,255,0.2);
+  --card:rgba(10,22,40,0.9);--cglow:rgba(0,245,255,0.08);--pglow:rgba(139,48,255,0.12);
+  --green:#00e676;--yellow:#ffd700;--red:#ff4444;--orange:#ff9800;
+  --fd:'Orbitron',sans-serif;--fb:'Exo 2',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+
+/* BG */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.025) 1px,transparent 1px);
+  background-size:50px 50px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:500;height:64px;
+  background:rgba(2,4,10,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+.logo{font-family:var(--fd);font-size:1.1rem;font-weight:900;letter-spacing:0.08em;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--grey);text-decoration:none;font-size:0.75rem;font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+.nav-right{display:flex;gap:0.75rem;align-items:center;}
+.btn{font-family:var(--fd);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:0.55rem 1.2rem;border-radius:6px;cursor:pointer;border:none;transition:all 0.25s;}
+.btn-o{background:transparent;border:1px solid rgba(0,245,255,0.35);color:var(--cyan);}
+.btn-o:hover{background:var(--cglow);box-shadow:0 0 20px rgba(0,245,255,0.2);}
+.btn-p{background:linear-gradient(135deg,var(--purple),#5b21b6);color:#fff;box-shadow:0 0 18px rgba(139,48,255,0.35);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(139,48,255,0.55);}
+
+/* HERO SEARCH */
+.search-hero{
+  position:relative;padding:3rem 2rem 2rem;text-align:center;
+  background:linear-gradient(180deg,rgba(139,48,255,0.06) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);overflow:hidden;
+}
+.search-hero::before{content:'';position:absolute;width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(139,48,255,0.12),transparent 70%);
+  top:0;left:50%;transform:translateX(-50%);pointer-events:none;}
+.sh-label{font-family:var(--fm);font-size:0.68rem;color:var(--cyan);letter-spacing:0.2em;margin-bottom:0.75rem;}
+.sh-title{font-family:var(--fd);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:1.5rem;line-height:1.2;}
+.sh-title span{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+.search-box{
+  display:flex;max-width:700px;margin:0 auto 1.5rem;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(0,245,255,0.25);border-radius:12px;overflow:hidden;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-box:focus-within{border-color:var(--cyan);box-shadow:0 0 30px rgba(0,245,255,0.15);}
+.search-box input{flex:1;background:none;border:none;padding:0.9rem 1.25rem;
+  color:var(--white);font-family:var(--fb);font-size:0.92rem;outline:none;}
+.search-box input::placeholder{color:var(--grey);}
+.search-box select{background:rgba(139,48,255,0.15);border:none;border-left:1px solid var(--border);
+  color:var(--white);font-family:var(--fm);font-size:0.68rem;padding:0 1rem;
+  cursor:pointer;outline:none;letter-spacing:0.06em;}
+.search-box select option{background:var(--dark);}
+.search-btn{padding:0 1.5rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;color:white;font-family:var(--fd);font-size:0.65rem;letter-spacing:0.12em;
+  cursor:pointer;transition:opacity 0.2s;white-space:nowrap;}
+.search-btn:hover{opacity:0.85;}
+
+.popular-tags{display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;}
+.ptag{padding:0.3rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:100px;font-size:0.68rem;font-family:var(--fm);color:var(--grey);
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.06em;}
+.ptag:hover,.ptag.active{background:rgba(0,245,255,0.08);border-color:rgba(0,245,255,0.4);color:var(--cyan);}
+
+/* LAYOUT */
+.page-layout{display:flex;gap:0;min-height:calc(100vh - 64px);position:relative;z-index:1;}
+
+/* SIDEBAR FILTERS */
+.filters{
+  width:260px;min-width:260px;
+  background:var(--deep);border-right:1px solid var(--border);
+  padding:1.5rem 1.25rem;position:sticky;top:64px;height:calc(100vh - 64px);
+  overflow-y:auto;
+}
+.filter-header{font-family:var(--fd);font-size:0.72rem;font-weight:700;letter-spacing:0.12em;
+  margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;}
+.filter-clear{font-size:0.62rem;color:var(--cyan);cursor:pointer;font-family:var(--fm);}
+.filter-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.filter-section:last-child{border-bottom:none;}
+.filter-label{font-size:0.62rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:0.75rem;}
+
+.filter-option{display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0;cursor:pointer;
+  font-size:0.8rem;color:var(--grey);transition:color 0.2s;}
+.filter-option:hover{color:var(--white);}
+.filter-option input[type=checkbox]{appearance:none;width:16px;height:16px;
+  border:1px solid var(--border);border-radius:4px;cursor:pointer;
+  transition:all 0.2s;flex-shrink:0;position:relative;}
+.filter-option input[type=checkbox]:checked{background:var(--purple);border-color:var(--purple);}
+.filter-option input[type=checkbox]:checked::after{content:'✓';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.6rem;color:white;}
+.filter-count{margin-left:auto;font-size:0.62rem;font-family:var(--fm);color:var(--grey2);}
+
+/* Price Range */
+.price-range{margin-top:0.5rem;}
+.price-inputs{display:flex;gap:0.5rem;margin-bottom:0.75rem;}
+.price-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:6px;padding:0.5rem;color:var(--white);font-family:var(--fm);
+  font-size:0.72rem;text-align:center;outline:none;transition:border-color 0.2s;}
+.price-input:focus{border-color:var(--cyan);}
+input[type=range]{width:100%;appearance:none;height:3px;background:linear-gradient(90deg,var(--purple),var(--cyan));
+  border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:14px;height:14px;
+  background:var(--cyan);border-radius:50%;box-shadow:0 0 10px rgba(0,245,255,0.5);}
+
+/* Star filter */
+.star-filter{display:flex;flex-direction:column;gap:0.4rem;}
+.star-row{display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:0.3rem 0.5rem;
+  border-radius:6px;transition:background 0.2s;}
+.star-row:hover{background:rgba(255,255,255,0.04);}
+.stars-display{color:var(--yellow);font-size:0.8rem;letter-spacing:1px;}
+.star-label{font-size:0.72rem;color:var(--grey);font-family:var(--fm);}
+
+/* MAIN CONTENT */
+.gig-main{flex:1;padding:1.5rem 2rem;min-width:0;}
+
+/* Results bar */
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.results-count{font-size:0.82rem;color:var(--grey);}
+.results-count strong{color:var(--white);font-family:var(--fd);}
+.results-controls{display:flex;gap:0.75rem;align-items:center;}
+.sort-select{background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:8px;padding:0.5rem 1rem;color:var(--white);font-family:var(--fm);
+  font-size:0.68rem;cursor:pointer;outline:none;letter-spacing:0.06em;}
+.sort-select option{background:var(--dark);}
+.view-toggle{display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.view-btn{padding:0.5rem 0.75rem;background:none;border:none;color:var(--grey);cursor:pointer;font-size:0.9rem;transition:all 0.2s;}
+.view-btn.active{background:rgba(139,48,255,0.2);color:var(--white);}
+
+/* ACTIVE FILTERS */
+.active-filters{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+.af-tag{display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.75rem;
+  background:rgba(139,48,255,0.12);border:1px solid rgba(139,48,255,0.3);
+  border-radius:100px;font-size:0.65rem;font-family:var(--fm);color:var(--purple2);cursor:pointer;}
+.af-tag:hover{background:rgba(139,48,255,0.2);}
+.af-x{color:var(--grey);margin-left:0.1rem;}
+
+/* GIG CARDS GRID */
+.gigs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;}
+.gigs-grid.list-view{grid-template-columns:1fr;}
+
+/* GIG CARD */
+.gig-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;transition:all 0.3s;cursor:pointer;position:relative;
+  animation:fadeUp 0.5s ease both;
+}
+.gig-card:hover{border-color:rgba(139,48,255,0.4);transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(139,48,255,0.1);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* stagger */
+.gig-card:nth-child(1){animation-delay:0.05s;}
+.gig-card:nth-child(2){animation-delay:0.1s;}
+.gig-card:nth-child(3){animation-delay:0.15s;}
+.gig-card:nth-child(4){animation-delay:0.2s;}
+.gig-card:nth-child(5){animation-delay:0.25s;}
+.gig-card:nth-child(6){animation-delay:0.3s;}
+
+.gig-thumb{
+  height:160px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+}
+.gig-thumb::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 50%,rgba(2,4,10,0.8) 100%);}
+
+.badge-top{position:absolute;top:0.75rem;left:0.75rem;z-index:2;
+  padding:0.2rem 0.6rem;border-radius:100px;font-size:0.58rem;font-family:var(--fm);letter-spacing:0.1em;}
+.badge-featured{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:var(--yellow);}
+.badge-new{background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.4);color:var(--green);}
+.badge-hot{background:rgba(255,68,68,0.15);border:1px solid rgba(255,68,68,0.4);color:var(--red);}
+
+.save-btn{position:absolute;top:0.75rem;right:0.75rem;z-index:2;
+  width:30px;height:30px;background:rgba(2,4,10,0.7);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.save-btn:hover,.save-btn.saved{background:rgba(255,68,68,0.2);border-color:rgba(255,68,68,0.4);color:var(--red);}
+
+.gig-body{padding:1.1rem;}
+.seller-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;}
+.seller-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;}
+.seller-name{font-size:0.75rem;font-weight:600;}
+.seller-level{font-size:0.6rem;font-family:var(--fm);color:var(--purple2);margin-left:auto;
+  padding:0.1rem 0.4rem;background:rgba(139,48,255,0.12);border-radius:4px;}
+
+.gig-title{font-size:0.85rem;line-height:1.5;margin-bottom:0.75rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+.gig-tags{display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.85rem;}
+.gtag{padding:0.18rem 0.55rem;background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);
+  border-radius:100px;font-size:0.6rem;font-family:var(--fm);color:var(--cyan2);letter-spacing:0.04em;}
+
+.gig-footer{display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,0.05);padding-top:0.85rem;}
+.gig-rating{display:flex;align-items:center;gap:0.35rem;}
+.stars{color:var(--yellow);font-size:0.75rem;}
+.rating-num{font-size:0.75rem;font-weight:600;}
+.rating-count{font-size:0.65rem;color:var(--grey);font-family:var(--fm);}
+.gig-price-box{text-align:right;}
+.price-from{font-size:0.58rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.08em;}
+.price-val{font-family:var(--fd);font-size:1rem;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* LIST VIEW card */
+.gigs-grid.list-view .gig-card{display:flex;flex-direction:row;}
+.gigs-grid.list-view .gig-thumb{width:160px;min-width:160px;height:auto;min-height:130px;border-radius:0;}
+.gigs-grid.list-view .gig-body{flex:1;}
+
+/* LOAD MORE */
+.load-more{display:flex;justify-content:center;margin-top:2.5rem;}
+.load-btn{padding:0.85rem 2.5rem;background:rgba(139,48,255,0.1);
+  border:1px solid rgba(139,48,255,0.35);border-radius:8px;
+  color:var(--purple2);font-family:var(--fd);font-size:0.68rem;letter-spacing:0.12em;
+  cursor:pointer;transition:all 0.25s;}
+.load-btn:hover{background:rgba(139,48,255,0.2);box-shadow:0 0 25px rgba(139,48,255,0.2);}
+
+/* ── GIG DETAIL MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(2,4,10,0.92);
+  backdrop-filter:blur(12px);z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;padding:1rem;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark);border:1px solid var(--bpurple);border-radius:18px;
+  width:100%;max-width:900px;max-height:90vh;overflow-y:auto;
+  transform:scale(0.96);transition:transform 0.3s;position:relative;}
+.modal-overlay.open .modal{transform:scale(1);}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;z-index:10;
+  width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.1rem;color:var(--grey);transition:all 0.2s;}
+.modal-close:hover{color:var(--white);border-color:var(--cyan);}
+
+.modal-hero{height:220px;display:flex;align-items:center;justify-content:center;
+  font-size:5rem;position:relative;overflow:hidden;}
+.modal-hero::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 30%,var(--dark) 100%);}
+
+.modal-body{padding:2rem;}
+.modal-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:2rem;}
+
+.modal-title{font-family:var(--fd);font-size:1.1rem;font-weight:700;line-height:1.4;margin-bottom:1rem;}
+.modal-seller{display:flex;align-items:center;gap:0.85rem;margin-bottom:1.25rem;
+  padding:1rem;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid var(--border);}
+.modal-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0;}
+.modal-seller-name{font-family:var(--fd);font-size:0.85rem;font-weight:600;}
+.modal-seller-meta{font-size:0.72rem;color:var(--grey);font-family:var(--fm);margin-top:0.2rem;}
+.contact-btn{margin-left:auto;padding:0.5rem 1rem;background:rgba(0,245,255,0.08);
+  border:1px solid rgba(0,245,255,0.3);border-radius:8px;color:var(--cyan);
+  font-family:var(--fd);font-size:0.62rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
+.contact-btn:hover{background:rgba(0,245,255,0.15);}
+
+.section-label-sm{font-size:0.62rem;color:var(--grey);font-family:var(--fm);
+  letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.75rem;}
+.modal-desc{font-size:0.85rem;color:var(--grey);line-height:1.8;margin-bottom:1.5rem;}
+.modal-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+
+/* Package Cards */
+.packages{display:flex;flex-direction:column;gap:0.75rem;}
+.pkg{border:1px solid var(--border);border-radius:10px;padding:1.1rem;transition:all 0.2s;cursor:pointer;}
+.pkg:hover,.pkg.selected{border-color:rgba(139,48,255,0.5);background:var(--pglow);}
+.pkg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;}
+.pkg-name{font-family:var(--fd);font-size:0.72rem;font-weight:700;letter-spacing:0.1em;}
+.pkg-name.basic{color:var(--grey);}
+.pkg-name.standard{color:var(--cyan2);}
+.pkg-name.premium{color:var(--yellow);}
+.pkg-price{font-family:var(--fd);font-size:1.1rem;font-weight:700;color:var(--cyan);}
+.pkg-desc{font-size:0.78rem;color:var(--grey);margin-bottom:0.75rem;line-height:1.5;}
+.pkg-features{display:flex;flex-direction:column;gap:0.3rem;}
+.pkg-feat{font-size:0.72rem;color:var(--grey);display:flex;align-items:center;gap:0.4rem;}
+.pkg-feat::before{content:'✓';color:var(--green);font-size:0.7rem;}
+.pkg-meta{display:flex;gap:1rem;margin-top:0.75rem;font-size:0.68rem;font-family:var(--fm);color:var(--grey2);}
+
+.order-btn{width:100%;margin-top:1rem;padding:0.9rem;
+  background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;color:white;
+  font-family:var(--fd);font-size:0.72rem;letter-spacing:0.12em;
+  cursor:pointer;transition:all 0.25s;
+  box-shadow:0 0 25px rgba(139,48,255,0.35);}
+.order-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(139,48,255,0.55);}
+
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem;}
+.mstat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;
+  padding:0.75rem;text-align:center;}
+.mstat-val{font-family:var(--fd);font-size:0.95rem;font-weight:700;color:var(--cyan);}
+.mstat-label{font-size:0.6rem;color:var(--grey);font-family:var(--fm);margin-top:0.2rem;letter-spacing:0.08em;}
+
+/* Reviews */
+.review-item{border-top:1px solid rgba(255,255,255,0.04);padding:1rem 0;}
+.review-header{display:flex;align-items:center;gap:0.65rem;margin-bottom:0.5rem;}
+.rev-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;}
+.rev-name{font-size:0.78rem;font-weight:600;}
+.rev-date{font-size:0.62rem;color:var(--grey);font-family:var(--fm);margin-left:auto;}
+.rev-stars{color:var(--yellow);font-size:0.78rem;margin-bottom:0.35rem;}
+.rev-text{font-size:0.8rem;color:var(--grey);line-height:1.6;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .filters{display:none;}
+  .gig-main{padding:1rem;}
+  .modal-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+}
+@media(max-width:600px){
+  .gigs-grid{grid-template-columns:1fr;}
+  .search-box{flex-direction:column;border-radius:10px;}
+  .search-box select{border-left:none;border-top:1px solid var(--border);padding:0.75rem 1rem;}
+}
+
+/* FILTER MOBILE BTN */
+.filter-mob-btn{display:none;padding:0.5rem 1rem;background:rgba(139,48,255,0.1);
+  border:1px solid var(--bpurple);border-radius:8px;color:var(--purple2);
+  font-family:var(--fd);font-size:0.62rem;letter-spacing:0.1em;cursor:pointer;}
+@media(max-width:900px){.filter-mob-btn{display:flex;align-items:center;gap:0.5rem;}}
+
+/* PAGINATION */
+.pagination{display:flex;gap:0.4rem;justify-content:center;margin-top:2rem;}
+.page-num{width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;
+  font-family:var(--fm);font-size:0.72rem;cursor:pointer;transition:all 0.2s;}
+.page-num:hover,.page-num.active{background:rgba(139,48,255,0.2);border-color:var(--purple);color:var(--purple2);}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--purple),var(--cyan2));color:white;
+  padding:0.7rem 1.5rem;border-radius:100px;font-family:var(--fd);font-size:0.68rem;
+  letter-spacing:0.08em;z-index:9999;transition:transform 0.4s;white-space:nowrap;
+  box-shadow:0 10px 40px rgba(139,48,255,0.5);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">WEB3⚡WEAPON</div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#" class="active">Browse Gigs</a></li>
+    <li><a href="#">Job Board</a></li>
+    <li><a href="#">Dashboard</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn btn-o">Login</button>
+    <button class="btn btn-p">Post a Gig</button>
+  </div>
+</nav>
+
+<!-- HERO SEARCH -->
+<div class="search-hero">
+  <div class="sh-label">// MARKETPLACE</div>
+  <h1 class="sh-title">Find Top <span>Web3 Talent</span></h1>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search gigs, skills, or freelancers..." oninput="filterGigs()">
+    <select id="catFilter" onchange="filterGigs()">
+      <option value="">All Categories</option>
+      <option>Smart Contracts</option>
+      <option>NFT Design</option>
+      <option>Web3 Dev</option>
+      <option>Blockchain Audit</option>
+      <option>Crypto Marketing</option>
+      <option>Telegram Bots</option>
+      <option>AI Automation</option>
+      <option>Solana Dev</option>
+    </select>
+    <button class="search-btn" onclick="filterGigs()">🔍 SEARCH</button>
+  </div>
+  <div class="popular-tags">
+    <span class="ptag active" onclick="tagSearch(this,'')">All</span>
+    <span class="ptag" onclick="tagSearch(this,'Solidity')">Solidity</span>
+    <span class="ptag" onclick="tagSearch(this,'NFT')">NFT Art</span>
+    <span class="ptag" onclick="tagSearch(this,'Solana')">Solana</span>
+    <span class="ptag" onclick="tagSearch(this,'DeFi')">DeFi</span>
+    <span class="ptag" onclick="tagSearch(this,'Audit')">Audit</span>
+    <span class="ptag" onclick="tagSearch(this,'Bot')">Telegram Bot</span>
+    <span class="ptag" onclick="tagSearch(this,'Pi')">Pi Network</span>
+    <span class="ptag" onclick="tagSearch(this,'TON')">TON</span>
+  </div>
+</div>
+
+<!-- PAGE LAYOUT -->
+<div class="page-layout">
+
+  <!-- SIDEBAR FILTERS -->
+  <aside class="filters">
+    <div class="filter-header">FILTERS <span class="filter-clear" onclick="clearFilters()">Clear All</span></div>
+
+    <div class="filter-section">
+      <div class="filter-label">Category</div>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> Smart Contract Dev <span class="filter-count">124</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> NFT Design <span class="filter-count">210</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> Web3 Frontend <span class="filter-count">89</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> Blockchain Audit <span class="filter-count">34</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> Crypto Marketing <span class="filter-count">78</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> Telegram Bots <span class="filter-count">92</span></label>
+      <label class="filter-option"><input type="checkbox" onchange="filterGigs()"> AI Automation <span class="filter-count">105</span></label>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Budget (USD)</div>
+      <div class="price-range">
+        <div class="price-inputs">
+          <input type="text" class="price-input" placeholder="$0" id="minPrice">
+          <input type="text" class="price-input" placeholder="$2000" id="maxPrice">
+        </div>
+        <input type="range" min="0" max="2000" value="2000" oninput="document.getElementById('maxPrice').value='$'+this.value">
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Seller Rating</div>
+      <div class="star-filter">
+        <div class="star-row" onclick="this.classList.toggle('selected')">
+          <span class="stars-display">★★★★★</span><span class="star-label">5.0 only</span>
+        </div>
+        <div class="star-row" onclick="this.classList.toggle('selected')">
+          <span class="stars-display">★★★★☆</span><span class="star-label">4.0 & up</span>
+        </div>
+        <div class="star-row" onclick="this.classList.toggle('selected')">
+          <span class="stars-display">★★★☆☆</span><span class="star-label">3.0 & up</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Delivery Time</div>
+      <label class="filter-option"><input type="checkbox"> Express (1 day)</label>
+      <label class="filter-option"><input type="checkbox"> Up to 3 days</label>
+      <label class="filter-option"><input type="checkbox"> Up to 7 days</label>
+      <label class="filter-option"><input type="checkbox"> Any time</label>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Blockchain</div>
+      <label class="filter-option"><input type="checkbox"> <span>π</span> Pi Network</label>
+      <label class="filter-option"><input type="checkbox"> ◎ Solana</label>
+      <label class="filter-option"><input type="checkbox"> Ξ Ethereum</label>
+      <label class="filter-option"><input type="checkbox"> ⬡ BSC</label>
+      <label class="filter-option"><input type="checkbox"> 💎 TON</label>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Seller Status</div>
+      <label class="filter-option"><input type="checkbox"> 🟢 Online Now</label>
+      <label class="filter-option"><input type="checkbox"> ✓ Verified</label>
+      <label class="filter-option"><input type="checkbox"> ⭐ Top Rated</label>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="gig-main">
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <div class="results-count">Showing <strong id="gigCount">24</strong> gigs</div>
+      <div class="results-controls">
+        <button class="filter-mob-btn">⚙️ Filters</button>
+        <select class="sort-select" onchange="sortGigs(this.value)">
+          <option value="best">Best Match</option>
+          <option value="popular">Most Popular</option>
+          <option value="newest">Newest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+        </select>
+        <div class="view-toggle">
+          <button class="view-btn active" id="gridBtn" onclick="setView('grid')" title="Grid view">⊞</button>
+          <button class="view-btn" id="listBtn" onclick="setView('list')" title="List view">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active filters -->
+    <div class="active-filters" id="activeFilters">
+      <span class="af-tag" onclick="removeFilter(this)">Web3 Dev <span class="af-x">×</span></span>
+      <span class="af-tag" onclick="removeFilter(this)">Rating 4+ <span class="af-x">×</span></span>
+    </div>
+
+    <!-- GIGS GRID -->
+    <div class="gigs-grid" id="gigsGrid">
+
+      <!-- Card 1 -->
+      <div class="gig-card" onclick="openGig(0)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#1a0533,#0d2045)">
+          <div class="badge-top badge-featured">⭐ FEATURED</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          📄
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+            <div class="seller-name">Alex K.</div>
+            <div class="seller-level">PRO</div>
+          </div>
+          <div class="gig-title">I will develop and audit your smart contract on Ethereum, BSC, or Solana</div>
+          <div class="gig-tags"><span class="gtag">Solidity</span><span class="gtag">EVM</span><span class="gtag">Audit</span><span class="gtag">DeFi</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span><span class="rating-count">(47)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$200</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="gig-card" onclick="openGig(1)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#330b1a,#1a0033)">
+          <div class="badge-top badge-hot">🔥 HOT</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          🎨
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">MN</div>
+            <div class="seller-name">Maria N.</div>
+            <div class="seller-level">TOP</div>
+          </div>
+          <div class="gig-title">I will create a stunning 10,000 piece generative NFT collection with metadata</div>
+          <div class="gig-tags"><span class="gtag">NFT Art</span><span class="gtag">Generative</span><span class="gtag">Metadata</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span><span class="rating-count">(89)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$80</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="gig-card" onclick="openGig(2)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#0a2a1a,#052015)">
+          <div class="badge-top badge-new">✨ NEW</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          ◎
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#00c851,#007e33)">JO</div>
+            <div class="seller-name">James O.</div>
+            <div class="seller-level">PRO</div>
+          </div>
+          <div class="gig-title">I will build your Solana or TON blockchain dApp with Rust and Anchor framework</div>
+          <div class="gig-tags"><span class="gtag">Rust</span><span class="gtag">Solana</span><span class="gtag">TON</span><span class="gtag">Anchor</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.7</span><span class="rating-count">(31)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$150</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="gig-card" onclick="openGig(3)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#1a1500,#2a1f00)">
+          <div class="badge-top badge-featured">⭐ FEATURED</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          🔒
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DL</div>
+            <div class="seller-name">David L.</div>
+            <div class="seller-level">ELITE</div>
+          </div>
+          <div class="gig-title">I will perform a complete security audit of your smart contract and DeFi protocol</div>
+          <div class="gig-tags"><span class="gtag">Security</span><span class="gtag">Audit</span><span class="gtag">DeFi</span><span class="gtag">Report</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★★</span><span class="rating-num">5.0</span><span class="rating-count">(23)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$500</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="gig-card" onclick="openGig(4)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#0d1f33,#051428)">
+          <div class="badge-top badge-hot">🔥 HOT</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          🤖
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">FH</div>
+            <div class="seller-name">Fatima H.</div>
+            <div class="seller-level">PRO</div>
+          </div>
+          <div class="gig-title">I will build a custom Telegram bot with crypto price alerts and wallet tracking</div>
+          <div class="gig-tags"><span class="gtag">Telegram</span><span class="gtag">Bot</span><span class="gtag">Python</span><span class="gtag">Crypto</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.6</span><span class="rating-count">(18)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$80</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="gig-card" onclick="openGig(5)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#1a0d26,#0d0726)">
+          <div class="badge-top badge-new">✨ NEW</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          π
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">KM</div>
+            <div class="seller-name">Kwame M.</div>
+            <div class="seller-level">PRO</div>
+          </div>
+          <div class="gig-title">I will build Pi Network apps, Pi SDK integration, and Pi payment gateway</div>
+          <div class="gig-tags"><span class="gtag">Pi Network</span><span class="gtag">Pi SDK</span><span class="gtag">Payments</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span><span class="rating-count">(12)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$120</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 7 -->
+      <div class="gig-card" onclick="openGig(6)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#261500,#1a0d00)">
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          📣
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#ff9800,#e65100)">SA</div>
+            <div class="seller-name">Sofia A.</div>
+            <div class="seller-level">TOP</div>
+          </div>
+          <div class="gig-title">I will manage your crypto project's community on Telegram and Discord</div>
+          <div class="gig-tags"><span class="gtag">Community</span><span class="gtag">Telegram</span><span class="gtag">Discord</span><span class="gtag">Growth</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.5</span><span class="rating-count">(64)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$40</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 8 -->
+      <div class="gig-card" onclick="openGig(7)">
+        <div class="gig-thumb" style="background:linear-gradient(135deg,#001a26,#001020)">
+          <div class="badge-top badge-featured">⭐ FEATURED</div>
+          <div class="save-btn" onclick="event.stopPropagation();toggleSave(this)">🤍</div>
+          🪙
+        </div>
+        <div class="gig-body">
+          <div class="seller-row">
+            <div class="seller-av" style="background:linear-gradient(135deg,#f0b90b,#ff6b35)">RP</div>
+            <div class="seller-name">Rahul P.</div>
+            <div class="seller-level">ELITE</div>
+          </div>
+          <div class="gig-title">I will create your ERC-20, BEP-20 token with tokenomics and liquidity setup</div>
+          <div class="gig-tags"><span class="gtag">Token</span><span class="gtag">ERC-20</span><span class="gtag">BEP-20</span><span class="gtag">DeFi</span></div>
+          <div class="gig-footer">
+            <div class="gig-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span><span class="rating-count">(38)</span></div>
+            <div class="gig-price-box"><div class="price-from">STARTING FROM</div><div class="price-val">$250</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /gigsGrid -->
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="page-num active">1</div>
+      <div class="page-num">2</div>
+      <div class="page-num">3</div>
+      <div class="page-num">4</div>
+      <div class="page-num">...</div>
+      <div class="page-num">12</div>
+    </div>
+
+  </div><!-- /gig-main -->
+</div><!-- /page-layout -->
+
+<!-- GIG DETAIL MODAL -->
+<div class="modal-overlay" id="gigModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeGig()">×</div>
+    <div class="modal-hero" id="modalHero" style="background:linear-gradient(135deg,#1a0533,#0d2045)">
+      <span id="modalEmoji" style="position:relative;z-index:1">📄</span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div>
+          <!-- Seller -->
+          <div class="modal-seller">
+            <div class="modal-av" id="modalAv" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+            <div>
+              <div class="modal-seller-name" id="modalSellerName">Alex K.</div>
+              <div class="modal-seller-meta" id="modalSellerMeta">⭐ 4.9 (47 reviews) • PRO Seller • 🟢 Online</div>
+            </div>
+            <button class="contact-btn" onclick="toast('Opening chat...')">💬 CONTACT</button>
+          </div>
+
+          <h2 class="modal-title" id="modalTitle">I will develop and audit your smart contract</h2>
+
+          <!-- Stats -->
+          <div class="modal-stats">
+            <div class="mstat"><div class="mstat-val" id="mOrders">47</div><div class="mstat-label">ORDERS</div></div>
+            <div class="mstat"><div class="mstat-val" id="mDelivery">3 days</div><div class="mstat-label">DELIVERY</div></div>
+            <div class="mstat"><div class="mstat-val" id="mRating">4.9★</div><div class="mstat-label">RATING</div></div>
+          </div>
+
+          <div class="section-label-sm">// ABOUT THIS GIG</div>
+          <div class="modal-desc" id="modalDesc">Professional smart contract development with full security audit. Delivered with complete documentation and test suite.</div>
+
+          <div class="section-label-sm">// SKILLS & TAGS</div>
+          <div class="modal-tags" id="modalTagsContainer"></div>
+
+          <div class="section-label-sm">// REVIEWS</div>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="rev-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+              <div class="rev-name">Luna M.</div>
+              <div class="rev-date">May 2026</div>
+            </div>
+            <div class="rev-stars">★★★★★</div>
+            <div class="rev-text">"Exceptional work! Delivered ahead of schedule with a full security report. Highly recommended."</div>
+          </div>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="rev-av" style="background:linear-gradient(135deg,#00c851,#007e33)">RP</div>
+              <div class="rev-name">Rahul P.</div>
+              <div class="rev-date">Apr 2026</div>
+            </div>
+            <div class="rev-stars">★★★★★</div>
+            <div class="rev-text">"Very professional and knowledgeable. Found 3 critical bugs in our contract. Worth every penny."</div>
+          </div>
+        </div>
+
+        <!-- PACKAGES -->
+        <div>
+          <div class="section-label-sm" style="margin-bottom:0.85rem">// SELECT PACKAGE</div>
+          <div class="packages">
+            <div class="pkg" onclick="selectPkg(this,'basic')">
+              <div class="pkg-header">
+                <div class="pkg-name basic">BASIC</div>
+                <div class="pkg-price" id="pkg-basic-price">$200</div>
+              </div>
+              <div class="pkg-desc">Simple contract deployment with basic testing</div>
+              <div class="pkg-features">
+                <div class="pkg-feat">ERC-20 / BEP-20 token</div>
+                <div class="pkg-feat">Basic test suite</div>
+                <div class="pkg-feat">Source code delivery</div>
+              </div>
+              <div class="pkg-meta"><span>⏱ 3 days</span><span>🔄 2 revisions</span></div>
+            </div>
+            <div class="pkg selected" onclick="selectPkg(this,'standard')">
+              <div class="pkg-header">
+                <div class="pkg-name standard">STANDARD</div>
+                <div class="pkg-price" id="pkg-std-price">$400</div>
+              </div>
+              <div class="pkg-desc">Full contract with audit report and documentation</div>
+              <div class="pkg-features">
+                <div class="pkg-feat">Custom smart contract</div>
+                <div class="pkg-feat">Full security audit</div>
+                <div class="pkg-feat">Complete documentation</div>
+                <div class="pkg-feat">Deployment support</div>
+              </div>
+              <div class="pkg-meta"><span>⏱ 5 days</span><span>🔄 5 revisions</span></div>
+            </div>
+            <div class="pkg" onclick="selectPkg(this,'premium')">
+              <div class="pkg-header">
+                <div class="pkg-name premium">PREMIUM</div>
+                <div class="pkg-price" id="pkg-pre-price">$800</div>
+              </div>
+              <div class="pkg-desc">Enterprise-grade contract suite with ongoing support</div>
+              <div class="pkg-features">
+                <div class="pkg-feat">Full DeFi protocol</div>
+                <div class="pkg-feat">Advanced security audit</div>
+                <div class="pkg-feat">Gas optimization</div>
+                <div class="pkg-feat">30-day support</div>
+                <div class="pkg-feat">Mainnet deployment</div>
+              </div>
+              <div class="pkg-meta"><span>⏱ 10 days</span><span>🔄 Unlimited</span></div>
+            </div>
+          </div>
+          <button class="order-btn" onclick="placeOrder()">🔒 ORDER NOW — ESCROW PROTECTED</button>
+          <div style="text-align:center;margin-top:0.75rem;font-size:0.68rem;color:var(--grey);font-family:var(--fm);">
+            Payment secured by smart contract escrow
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// GIG DATA
+const gigs = [
+  {emoji:'📄',bg:'linear-gradient(135deg,#1a0533,#0d2045)',av:'AK',avBg:'linear-gradient(135deg,#8b30ff,#00f5ff)',seller:'Alex K.',meta:'⭐ 4.9 (47 reviews) • PRO • 🟢 Online',title:'I will develop and audit your smart contract on Ethereum, BSC, or Solana',desc:'Professional smart contract development with full security audit. 5+ years of Solidity experience. Delivered with complete documentation, test suite, and deployment guide. I have audited over 200 contracts with zero post-audit exploits.',tags:['Solidity','EVM','Audit','DeFi','ERC-20'],orders:'47',delivery:'3 days',rating:'4.9★',prices:{basic:'$200',standard:'$400',premium:'$800'}},
+  {emoji:'🎨',bg:'linear-gradient(135deg,#330b1a,#1a0033)',av:'MN',avBg:'linear-gradient(135deg,#ff6b35,#f7c59f)',seller:'Maria N.',meta:'⭐ 5.0 (89 reviews) • TOP RATED • 🟢 Online',title:'I will create a stunning 10,000 piece generative NFT collection with metadata',desc:'Expert NFT artist with 3+ years in generative art. I create unique, layered art with traits, rarity settings, and complete metadata for OpenSea, Magic Eden, and all major platforms.',tags:['NFT Art','Generative','Metadata','IPFS'],orders:'89',delivery:'5 days',rating:'5.0★',prices:{basic:'$80',standard:'$200',premium:'$500'}},
+  {emoji:'◎',bg:'linear-gradient(135deg,#0a2a1a,#052015)',av:'JO',avBg:'linear-gradient(135deg,#00c851,#007e33)',seller:'James O.',meta:'⭐ 4.7 (31 reviews) • PRO • 🟡 Away',title:'I will build your Solana or TON blockchain dApp with Rust and Anchor framework',desc:'Full-stack Solana and TON developer. Expert in Rust, Anchor, and the complete Solana ecosystem. Built 50+ dApps including DEXes, NFT marketplaces, and DeFi protocols.',tags:['Rust','Solana','TON','Anchor','dApp'],orders:'31',delivery:'7 days',rating:'4.7★',prices:{basic:'$150',standard:'$400',premium:'$900'}},
+  {emoji:'🔒',bg:'linear-gradient(135deg,#1a1500,#2a1f00)',av:'DL',avBg:'linear-gradient(135deg,#00b4d8,#03045e)',seller:'David L.',meta:'⭐ 5.0 (23 reviews) • ELITE • 🟢 Online',title:'I will perform a complete security audit of your smart contract and DeFi protocol',desc:'Certified blockchain security expert. I provide comprehensive audits covering reentrancy, overflow, access control, flash loan attacks, and more. Full PDF report with severity ratings.',tags:['Security','Audit','DeFi','Slither','Mythril'],orders:'23',delivery:'4 days',rating:'5.0★',prices:{basic:'$500',standard:'$900',premium:'$2000'}},
+  {emoji:'🤖',bg:'linear-gradient(135deg,#0d1f33,#051428)',av:'FH',avBg:'linear-gradient(135deg,#9c27b0,#4a148c)',seller:'Fatima H.',meta:'⭐ 4.6 (18 reviews) • PRO • 🟢 Online',title:'I will build a custom Telegram bot with crypto price alerts and wallet tracking',desc:'Expert Python developer specializing in Telegram bots for crypto projects. I build bots with price tracking, wallet monitoring, community management, and Web3 integrations.',tags:['Telegram','Bot','Python','Crypto','API'],orders:'18',delivery:'2 days',rating:'4.6★',prices:{basic:'$80',standard:'$180',premium:'$350'}},
+  {emoji:'π',bg:'linear-gradient(135deg,#1a0d26,#0d0726)',av:'KM',avBg:'linear-gradient(135deg,#8b30ff,#4a148c)',seller:'Kwame M.',meta:'⭐ 4.8 (12 reviews) • PRO • 🟢 Online',title:'I will build Pi Network apps, Pi SDK integration, and Pi payment gateway',desc:'Pi Network certified developer. I build apps using Pi SDK, integrate Pi Browser, and set up Pi payment gateways for your store or platform. Pioneer since Day 1.',tags:['Pi Network','Pi SDK','Payments','Pioneer'],orders:'12',delivery:'5 days',rating:'4.8★',prices:{basic:'$120',standard:'$280',premium:'$600'}},
+  {emoji:'📣',bg:'linear-gradient(135deg,#261500,#1a0d00)',av:'SA',avBg:'linear-gradient(135deg,#ff9800,#e65100)',seller:'Sofia A.',meta:'⭐ 4.5 (64 reviews) • TOP RATED • 🟢 Online',title:"I will manage your crypto project's community on Telegram and Discord",desc:'Professional crypto community manager. I handle daily moderation, engagement campaigns, AMA sessions, announcement management, and growth strategies for Web3 projects.',tags:['Community','Telegram','Discord','Growth','Web3'],orders:'64',delivery:'1 day',rating:'4.5★',prices:{basic:'$40',standard:'$120',premium:'$300'}},
+  {emoji:'🪙',bg:'linear-gradient(135deg,#001a26,#001020)',av:'RP',avBg:'linear-gradient(135deg,#f0b90b,#ff6b35)',seller:'Rahul P.',meta:'⭐ 4.9 (38 reviews) • ELITE • 🟡 Away',title:'I will create your ERC-20, BEP-20 token with tokenomics and liquidity setup',desc:'Token creation specialist. I deploy custom ERC-20 and BEP-20 tokens with full tokenomics, liquidity pool setup on Uniswap/PancakeSwap, and contract verification on Etherscan.',tags:['Token','ERC-20','BEP-20','DeFi','Liquidity'],orders:'38',delivery:'2 days',rating:'4.9★',prices:{basic:'$250',standard:'$500',premium:'$1000'}}
+];
+
+// OPEN GIG
+function openGig(i) {
+  const g = gigs[i];
+  document.getElementById('modalHero').style.background = g.bg;
+  document.getElementById('modalEmoji').textContent = g.emoji;
+  document.getElementById('modalAv').textContent = g.av;
+  document.getElementById('modalAv').style.background = g.avBg;
+  document.getElementById('modalSellerName').textContent = g.seller;
+  document.getElementById('modalSellerMeta').textContent = g.meta;
+  document.getElementById('modalTitle').textContent = g.title;
+  document.getElementById('modalDesc').textContent = g.desc;
+  document.getElementById('mOrders').textContent = g.orders;
+  document.getElementById('mDelivery').textContent = g.delivery;
+  document.getElementById('mRating').textContent = g.rating;
+  document.getElementById('pkg-basic-price').textContent = g.prices.basic;
+  document.getElementById('pkg-std-price').textContent = g.prices.standard;
+  document.getElementById('pkg-pre-price').textContent = g.prices.premium;
+  const tc = document.getElementById('modalTagsContainer');
+  tc.innerHTML = g.tags.map(t=>`<span class="gtag">${t}</span>`).join('');
+  document.getElementById('gigModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeGig() {
+  document.getElementById('gigModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('gigModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeGig(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeGig(); });
+
+// PACKAGE SELECT
+function selectPkg(el, type) {
+  document.querySelectorAll('.pkg').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ORDER
+function placeOrder() {
+  closeGig();
+  toast('🔒 Order placed! Funds locked in escrow');
+}
+
+// SAVE
+function toggleSave(btn) {
+  btn.classList.toggle('saved');
+  btn.textContent = btn.classList.contains('saved') ? '❤️' : '🤍';
+  toast(btn.classList.contains('saved') ? 'Saved to favorites' : 'Removed from favorites');
+}
+
+// VIEW TOGGLE
+function setView(v) {
+  const grid = document.getElementById('gigsGrid');
+  grid.classList.toggle('list-view', v==='list');
+  document.getElementById('gridBtn').classList.toggle('active', v==='grid');
+  document.getElementById('listBtn').classList.toggle('active', v==='list');
+}
+
+// FILTER/SEARCH
+function filterGigs() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cards = document.querySelectorAll('.gig-card');
+  let count = 0;
+  cards.forEach((card, i) => {
+    const g = gigs[i];
+    const match = !q || g.title.toLowerCase().includes(q) || g.tags.some(t => t.toLowerCase().includes(q)) || g.seller.toLowerCase().includes(q);
+    card.style.display = match ? '' : 'none';
+    if(match) count++;
+  });
+  document.getElementById('gigCount').textContent = count;
+}
+
+function tagSearch(el, tag) {
+  document.querySelectorAll('.ptag').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('searchInput').value = tag;
+  filterGigs();
+}
+
+function removeFilter(el) { el.remove(); }
+function clearFilters() {
+  document.querySelectorAll('#activeFilters .af-tag').forEach(t => t.remove());
+  document.querySelectorAll('.filter-option input').forEach(i => i.checked = false);
+  document.getElementById('searchInput').value = '';
+  filterGigs();
+  toast('Filters cleared');
+}
+
+function sortGigs(val) { toast('Sorting by: ' + val); }
+
+// PAGINATION
+document.querySelectorAll('.page-num').forEach(p => {
+  p.addEventListener('click', function() {
+    document.querySelectorAll('.page-num').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+// TOAST
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => el.style.transform = 'translateX(-50%) translateY(100px)', 2500);
+}
+</script>
+</body>
+</html>
