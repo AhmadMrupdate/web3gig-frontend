@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Weapon — The Ultimate Web3 Freelance Marketplace</title>
+<meta name="description" content="Secure decentralized freelance marketplace powered by crypto payments. Hire top Web3 experts or sell your skills worldwide.">
+<meta property="og:title" content="Web3 Weapon — Web3 Freelance Marketplace">
+<meta property="og:description" content="Hire top Web3 experts or sell your skills worldwide. Pi Network recommended.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#02040a;--deep:#050d1f;--dark:#0a1628;
+  --purple:#8b30ff;--purple2:#a855f7;--cyan:#00f5ff;--cyan2:#00c8d4;
+  --white:#f0f4ff;--grey:#8899bb;--grey2:#4a5568;
+  --border:rgba(0,245,255,0.1);--bpurple:rgba(139,48,255,0.2);
+  --card:rgba(10,22,40,0.9);--cglow:rgba(0,245,255,0.08);--pglow:rgba(139,48,255,0.12);
+  --green:#00e676;--yellow:#ffd700;--red:#ff4444;--orange:#ff9800;
+  --fd:'Orbitron',sans-serif;--fb:'Exo 2',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.02) 1px,transparent 1px);
+  background-size:50px 50px;}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:65px;
+  background:rgba(2,4,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+.logo{font-family:var(--fd);font-size:1.1rem;font-weight:900;letter-spacing:0.08em;cursor:pointer;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:0;list-style:none;}
+.nav-link{padding:0 1rem;height:65px;display:flex;align-items:center;font-family:var(--fm);
+  font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.nav-link:hover{color:var(--white);}
+.nav-link.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.nav-right{display:flex;gap:0.6rem;align-items:center;}
+.btn{font-family:var(--fd);font-size:0.62rem;letter-spacing:0.12em;padding:0.5rem 1.1rem;
+  border-radius:6px;cursor:pointer;border:none;transition:all 0.25s;}
+.btn-o{background:transparent;border:1px solid rgba(0,245,255,0.35);color:var(--cyan);}
+.btn-o:hover{background:var(--cglow);}
+.btn-p{background:linear-gradient(135deg,var(--purple),#5b21b6);color:#fff;box-shadow:0 0 15px rgba(139,48,255,0.35);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 0 28px rgba(139,48,255,0.55);}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:var(--black);font-weight:700;}
+.btn-c:hover{box-shadow:0 0 22px rgba(0,245,255,0.4);}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.ham span{width:22px;height:2px;background:var(--cyan);border-radius:2px;transition:all 0.3s;}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:65px;position:relative;z-index:1;}
+.page.active{display:block;}
+
+/* ══════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════ */
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:65px 2rem 4rem;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,245,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.04) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 25s linear infinite;}
+@keyframes gridMove{0%{transform:translate(0,0);}100%{transform:translate(60px,60px);}}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(139,48,255,0.2),transparent 70%);top:-200px;left:-150px;animation:of1 8s ease-in-out infinite;}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(0,245,255,0.12),transparent 70%);bottom:-100px;right:-100px;animation:of2 10s ease-in-out infinite;}
+@keyframes of1{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,30px);}}
+@keyframes of2{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,-40px);}}
+.hero-content{position:relative;z-index:2;max-width:900px;animation:fadeUp 1s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(139,48,255,0.12);border:1px solid rgba(139,48,255,0.35);border-radius:100px;padding:0.4rem 1rem;font-size:0.7rem;font-family:var(--fm);color:var(--purple2);letter-spacing:0.1em;margin-bottom:2rem;animation:badgePulse 3s ease-in-out infinite;}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(139,48,255,0.3);}50%{box-shadow:0 0 20px 5px rgba(139,48,255,0.15);}}
+.bdot{width:7px;height:7px;background:var(--purple2);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hero-title{font-family:var(--fd);font-size:clamp(2rem,5vw,4.2rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;letter-spacing:0.02em;}
+.ht1{display:block;color:var(--white);}
+.ht2{display:block;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:1rem;color:var(--grey);max-width:580px;margin:0 auto 2.5rem;line-height:1.75;font-weight:300;}
+.hero-btns{display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem;}
+.btn-xl{padding:0.9rem 2.2rem;font-size:0.72rem;}
+.hero-stats{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat-n{font-family:var(--fd);font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hstat-l{font-size:0.65rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.2rem;}
+
+/* Ticker */
+.ticker-wrap{background:rgba(0,245,255,0.03);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:38px;display:flex;align-items:center;}
+.ticker{display:flex;gap:4rem;animation:tickerMove 30s linear infinite;white-space:nowrap;}
+.ticker-item{font-family:var(--fm);font-size:0.68rem;color:var(--cyan2);letter-spacing:0.06em;display:flex;align-items:center;gap:0.4rem;}
+.tdot{width:5px;height:5px;background:var(--purple2);border-radius:50%;}
+@keyframes tickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* SECTIONS */
+section{padding:90px 2rem;}
+.sec-lbl{font-family:var(--fm);font-size:0.68rem;color:var(--cyan);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:0.75rem;}
+.sec-title{font-family:var(--fd);font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;line-height:1.2;margin-bottom:1rem;}
+.sec-sub{color:var(--grey);font-size:0.95rem;max-width:580px;line-height:1.75;font-weight:300;}
+.text-c{text-align:center;}.text-c .sec-sub{margin:0 auto;}
+.grad{background:linear-gradient(135deg,var(--cyan),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* How it works */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:3rem;}
+.step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;transition:all 0.3s;}
+.step:hover{border-color:rgba(0,245,255,0.3);transform:translateY(-4px);}
+.step-num{width:56px;height:56px;background:linear-gradient(135deg,var(--purple),var(--cyan2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.2rem;font-weight:700;margin:0 auto 1.25rem;box-shadow:0 0 25px rgba(139,48,255,0.35);}
+.step h3{font-family:var(--fd);font-size:0.82rem;margin-bottom:0.65rem;}
+.step p{font-size:0.82rem;color:var(--grey);line-height:1.65;}
+
+/* Categories */
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:1rem;margin-top:3rem;}
+.cat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.cat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--cglow),var(--pglow));opacity:0;transition:opacity 0.3s;}
+.cat:hover::before{opacity:1;}
+.cat:hover{border-color:rgba(0,245,255,0.25);transform:translateY(-2px);}
+.cat-ico{font-size:1.7rem;width:44px;height:44px;background:rgba(139,48,255,0.1);border:1px solid rgba(139,48,255,0.25);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;position:relative;z-index:1;}
+.cat-name{font-family:var(--fd);font-size:0.68rem;font-weight:600;letter-spacing:0.04em;margin-bottom:0.25rem;position:relative;z-index:1;}
+.cat-count{font-size:0.62rem;color:var(--grey);font-family:var(--fm);position:relative;z-index:1;}
+
+/* Freelancers */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem;margin-top:3rem;}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:all 0.3s;cursor:pointer;}
+.fcard:hover{border-color:rgba(139,48,255,0.4);transform:translateY(-3px);box-shadow:0 20px 50px rgba(139,48,255,0.08);}
+.fc-hdr{display:flex;align-items:center;gap:0.85rem;margin-bottom:0.85rem;}
+.fc-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0;position:relative;}
+.fc-dot{position:absolute;bottom:1px;right:1px;width:12px;height:12px;background:var(--green);border:2px solid var(--dark);border-radius:50%;}
+.fc-name{font-family:var(--fd);font-size:0.82rem;font-weight:600;}
+.fc-role{font-size:0.72rem;color:var(--grey);margin-top:0.1rem;}
+.tags{display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.85rem;}
+.tag{padding:0.2rem 0.6rem;background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);border-radius:100px;font-size:0.6rem;font-family:var(--fm);color:var(--cyan2);}
+.fc-foot{display:flex;justify-content:space-between;align-items:center;}
+.fc-stars{color:var(--yellow);font-size:0.75rem;}
+.fc-rate{font-family:var(--fd);font-size:0.78rem;color:var(--cyan);}
+
+/* Payment */
+.pay-wrap{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+.pay-list{list-style:none;margin-top:1.5rem;display:flex;flex-direction:column;gap:0.65rem;}
+.pay-list li{display:flex;align-items:center;gap:0.65rem;font-size:0.88rem;color:var(--grey);}
+.pcheck{color:var(--cyan);}
+.chains{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;}
+.chain{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.75rem;transition:all 0.25s;cursor:pointer;}
+.chain:hover{border-color:rgba(0,245,255,0.25);transform:translateY(-2px);}
+.chain.rec{border-color:rgba(139,48,255,0.4);background:rgba(139,48,255,0.06);grid-column:1/-1;}
+.chain-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0;}
+.chain-nm{font-family:var(--fd);font-size:0.72rem;}
+.chain-sym{font-size:0.6rem;color:var(--grey);font-family:var(--fm);}
+.rec-badge{margin-left:auto;padding:0.15rem 0.5rem;background:rgba(139,48,255,0.18);border:1px solid var(--purple);border-radius:100px;font-size:0.58rem;font-family:var(--fm);color:var(--purple2);}
+
+/* Security */
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:3rem;}
+.seci{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;transition:all 0.3s;}
+.seci:hover{border-color:rgba(0,245,255,0.25);}
+.seci-ico{width:50px;height:50px;background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.12);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem;}
+.seci h3{font-family:var(--fd);font-size:0.82rem;margin-bottom:0.5rem;}
+.seci p{font-size:0.82rem;color:var(--grey);line-height:1.65;}
+
+/* Testimonials */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;}
+.tcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;transition:all 0.3s;}
+.tcard:hover{border-color:rgba(139,48,255,0.25);}
+.tstars{color:var(--yellow);font-size:0.85rem;margin-bottom:0.85rem;}
+.ttext{font-size:0.85rem;color:var(--grey);line-height:1.7;font-style:italic;margin-bottom:1.25rem;}
+.tauthor{display:flex;align-items:center;gap:0.7rem;}
+.tav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+.tname{font-family:var(--fd);font-size:0.75rem;font-weight:600;}
+.trole{font-size:0.65rem;color:var(--grey);font-family:var(--fm);margin-top:0.12rem;}
+
+/* FAQ */
+.faq-wrap{max-width:780px;margin:3rem auto 0;}
+.faq{border:1px solid var(--border);border-radius:10px;margin-bottom:0.65rem;overflow:hidden;transition:border-color 0.3s;}
+.faq.open{border-color:rgba(0,245,255,0.25);}
+.faq-q{padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:var(--fd);font-size:0.82rem;letter-spacing:0.03em;transition:color 0.2s;user-select:none;}
+.faq.open .faq-q{color:var(--cyan);}
+.faq-ico{font-size:1.1rem;color:var(--cyan);transition:transform 0.3s;}
+.faq.open .faq-ico{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s;font-size:0.85rem;color:var(--grey);line-height:1.75;}
+.faq.open .faq-a{max-height:300px;padding:0 1.4rem 1.1rem;}
+
+/* CTA */
+.cta-box{max-width:680px;margin:0 auto;background:linear-gradient(135deg,rgba(139,48,255,0.1),rgba(0,245,255,0.05));border:1px solid rgba(139,48,255,0.25);border-radius:18px;padding:4.5rem 3rem;text-align:center;position:relative;}
+.cta-box h2{font-family:var(--fd);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:1rem;}
+.cta-box p{color:var(--grey);margin-bottom:2.25rem;font-size:0.95rem;}
+.cta-btns{display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap;}
+
+/* Newsletter */
+.nl-inner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
+.nl-text h3{font-family:var(--fd);font-size:1.1rem;margin-bottom:0.4rem;}
+.nl-text p{color:var(--grey);font-size:0.85rem;}
+.nl-form{display:flex;gap:0.65rem;flex-wrap:wrap;}
+.nl-input{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1.1rem;color:var(--white);font-family:var(--fb);font-size:0.85rem;outline:none;transition:border-color 0.2s;width:240px;}
+.nl-input:focus{border-color:var(--cyan);}
+.nl-input::placeholder{color:var(--grey);}
+
+/* Footer */
+footer{background:var(--deep);border-top:1px solid var(--border);padding:3.5rem 2rem 2rem;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem;}
+.fbrand p{color:var(--grey);font-size:0.82rem;line-height:1.7;margin-top:0.85rem;max-width:260px;}
+.fcol h4{font-family:var(--fd);font-size:0.72rem;font-weight:600;margin-bottom:1.1rem;letter-spacing:0.1em;color:var(--cyan);}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:0.5rem;}
+.fcol a{color:var(--grey);text-decoration:none;font-size:0.82rem;transition:color 0.2s;cursor:pointer;}
+.fcol a:hover{color:var(--cyan);}
+.footer-bot{border-top:1px solid var(--border);padding-top:1.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-bot p{font-size:0.72rem;color:var(--grey);font-family:var(--fm);}
+.socials{display:flex;gap:0.6rem;}
+.soc{width:34px;height:34px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--grey);cursor:pointer;font-size:0.85rem;transition:all 0.2s;}
+.soc:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* ══════════════════════════════════════
+   GIGS PAGE
+══════════════════════════════════════ */
+.gigs-hero{padding:3rem 2rem 2rem;text-align:center;background:linear-gradient(180deg,rgba(0,245,255,0.03),transparent);border-bottom:1px solid var(--border);}
+.search-box{display:flex;max-width:700px;margin:1.5rem auto;background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.2);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
+.search-box:focus-within{border-color:var(--cyan);}
+.sb-input{flex:1;background:none;border:none;padding:0.9rem 1.25rem;color:var(--white);font-family:var(--fb);font-size:0.9rem;outline:none;}
+.sb-input::placeholder{color:var(--grey);}
+.sb-btn{padding:0 1.5rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));border:none;color:white;font-family:var(--fd);font-size:0.62rem;letter-spacing:0.12em;cursor:pointer;}
+.ptags{display:flex;gap:0.45rem;justify-content:center;flex-wrap:wrap;}
+.ptag{padding:0.28rem 0.8rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;font-size:0.68rem;font-family:var(--fm);color:var(--grey);cursor:pointer;transition:all 0.2s;}
+.ptag:hover,.ptag.active{background:var(--cglow);border-color:rgba(0,245,255,0.35);color:var(--cyan);}
+.gigs-layout{display:flex;}
+.gigs-filters{width:240px;min-width:240px;background:var(--deep);border-right:1px solid var(--border);padding:1.25rem;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;}
+.gigs-main{flex:1;padding:1.5rem 2rem;}
+.filt-lbl{font-size:0.6rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.6rem;}
+.filt-sec{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.filt-sec:last-child{border-bottom:none;}
+.fopt{display:flex;align-items:center;gap:0.5rem;padding:0.32rem 0;cursor:pointer;font-size:0.78rem;color:var(--grey);transition:color 0.2s;}
+.fopt:hover{color:var(--white);}
+.fopt input[type=checkbox]{appearance:none;width:14px;height:14px;border:1px solid var(--border);border-radius:3px;cursor:pointer;position:relative;flex-shrink:0;transition:all 0.2s;}
+.fopt input[type=checkbox]:checked{background:var(--purple);border-color:var(--purple);}
+.fopt input[type=checkbox]:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.55rem;color:white;}
+.fc-count{margin-left:auto;font-size:0.6rem;font-family:var(--fm);color:var(--grey2);}
+.res-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
+.res-count{font-size:0.82rem;color:var(--grey);}strong{color:var(--white);}
+.sort-sel{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:0.48rem 0.9rem;color:var(--white);font-family:var(--fm);font-size:0.68rem;cursor:pointer;outline:none;}
+.sort-sel option{background:var(--dark);}
+.gigs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;}
+.gig-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer;}
+.gig-card:hover{border-color:rgba(139,48,255,0.35);transform:translateY(-3px);box-shadow:0 18px 50px rgba(139,48,255,0.08);}
+.gig-thumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;}
+.gig-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(2,4,10,0.8) 100%);}
+.gtop-badge{position:absolute;top:0.65rem;left:0.65rem;z-index:2;padding:0.18rem 0.55rem;border-radius:100px;font-size:0.58rem;font-family:var(--fm);letter-spacing:0.08em;}
+.gbf{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);color:var(--yellow);}
+.gbh{background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.35);color:var(--red);}
+.gbn{background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.35);color:var(--green);}
+.gsave{position:absolute;top:0.65rem;right:0.65rem;z-index:2;width:28px;height:28px;background:rgba(2,4,10,0.7);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+.gsave:hover{border-color:var(--red);}
+.gig-body{padding:1rem;}
+.gseller{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.65rem;}
+.gav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;flex-shrink:0;}
+.gname{font-size:0.72rem;font-weight:600;}
+.glvl{font-size:0.58rem;font-family:var(--fm);color:var(--purple2);margin-left:auto;padding:0.08rem 0.35rem;background:rgba(139,48,255,0.1);border-radius:3px;}
+.gig-title{font-size:0.82rem;line-height:1.48;margin-bottom:0.65rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.gtags{display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.75rem;}
+.gtag{padding:0.16rem 0.5rem;background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.1);border-radius:100px;font-size:0.58rem;font-family:var(--fm);color:var(--cyan2);}
+.gig-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.04);padding-top:0.75rem;}
+.gstars{color:var(--yellow);font-size:0.72rem;}
+.grating{font-size:0.72rem;font-weight:600;}
+.gcnt{font-size:0.62rem;color:var(--grey);font-family:var(--fm);}
+.gprice{text-align:right;}
+.gfrom{font-size:0.56rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.08em;}
+.gpval{font-family:var(--fd);font-size:0.95rem;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ══════════════════════════════════════
+   DASHBOARD PAGE
+══════════════════════════════════════ */
+.dash-layout{display:flex;min-height:calc(100vh - 65px);}
+.dash-sidebar{width:240px;min-width:240px;background:var(--deep);border-right:1px solid var(--border);padding:1.25rem;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;}
+.dash-user{background:rgba(139,48,255,0.08);border:1px solid var(--bpurple);border-radius:10px;padding:0.85rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;}
+.du-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;position:relative;}
+.du-dot{position:absolute;bottom:1px;right:1px;width:9px;height:9px;background:var(--green);border:2px solid var(--deep);border-radius:50%;}
+.du-name{font-family:var(--fd);font-size:0.7rem;font-weight:600;}
+.du-role{font-size:0.6rem;color:var(--purple2);font-family:var(--fm);margin-top:0.1rem;}
+.dnav-lbl{font-size:0.58rem;color:var(--grey2);font-family:var(--fm);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.45rem;margin-top:0.85rem;}
+.dnav-item{display:flex;align-items:center;gap:0.6rem;padding:0.58rem 0.8rem;border-radius:7px;margin-bottom:0.15rem;cursor:pointer;transition:all 0.2s;font-size:0.78rem;color:var(--grey);position:relative;}
+.dnav-item:hover{background:var(--cglow);color:var(--white);}
+.dnav-item.active{background:rgba(139,48,255,0.12);color:var(--white);border:1px solid var(--bpurple);}
+.dnav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--purple);border-radius:0 2px 2px 0;}
+.dnav-ico{font-size:0.95rem;width:18px;text-align:center;flex-shrink:0;}
+.dnav-badge{margin-left:auto;background:var(--purple);color:white;font-size:0.58rem;padding:0.08rem 0.38rem;border-radius:100px;font-family:var(--fm);}
+.wallet-mini{background:linear-gradient(135deg,rgba(139,48,255,0.12),rgba(0,245,255,0.06));border:1px solid rgba(139,48,255,0.25);border-radius:8px;padding:0.85rem;margin-top:auto;}
+.wm-lbl{font-size:0.58rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.12em;text-transform:uppercase;}
+.wm-bal{font-family:var(--fd);font-size:1rem;font-weight:700;color:var(--cyan);margin:0.25rem 0;}
+.wm-addr{font-size:0.58rem;color:var(--grey);font-family:var(--fm);}
+.wm-btns{display:flex;gap:0.4rem;margin-top:0.65rem;}
+.wm-btn{flex:1;padding:0.38rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:5px;color:var(--white);font-size:0.6rem;font-family:var(--fd);cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;}
+.wm-btn:hover{background:var(--cglow);border-color:var(--cyan);}
+.dash-main{flex:1;padding:1.75rem;overflow-x:hidden;}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem;}
+.dash-title{font-family:var(--fd);font-size:1rem;font-weight:700;}
+.role-sw{display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+.rsw{padding:0.42rem 0.9rem;background:none;border:none;color:var(--grey);font-family:var(--fd);font-size:0.6rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
+.rsw.active{background:rgba(139,48,255,0.18);color:var(--white);}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.ds{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;position:relative;overflow:hidden;transition:all 0.3s;}
+.ds:hover{transform:translateY(-2px);}
+.ds::before{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;filter:blur(25px);opacity:0.3;}
+.ds.c1::before{background:var(--cyan);}
+.ds.c2::before{background:var(--purple);}
+.ds.c3::before{background:var(--green);}
+.ds.c4::before{background:var(--orange);}
+.ds-lbl{font-size:0.6rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+.ds-val{font-family:var(--fd);font-size:1.6rem;font-weight:700;}
+.ds.c1 .ds-val{color:var(--cyan);}
+.ds.c2 .ds-val{color:var(--purple2);}
+.ds.c3 .ds-val{color:var(--green);}
+.ds.c4 .ds-val{color:var(--orange);}
+.ds-chg{font-size:0.65rem;margin-top:0.4rem;color:var(--green);}
+.ds-ico{position:absolute;bottom:0.85rem;right:1rem;font-size:1.8rem;opacity:0.1;}
+.dash-grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.dcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.dcard-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;}
+.dcard-title{font-family:var(--fd);font-size:0.78rem;font-weight:600;}
+.dcard-act{font-size:0.65rem;color:var(--cyan);cursor:pointer;font-family:var(--fm);}
+.chart-bars{display:flex;align-items:flex-end;gap:0.4rem;height:100px;}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.3rem;}
+.br{width:100%;border-radius:3px 3px 0 0;transition:height 1s ease;cursor:pointer;}
+.br.p{background:linear-gradient(180deg,var(--purple),rgba(139,48,255,0.1));}
+.br.c{background:linear-gradient(180deg,var(--cyan),rgba(0,245,255,0.1));}
+.br-lbl{font-size:0.55rem;color:var(--grey);font-family:var(--fm);}
+.orders-tbl{width:100%;border-collapse:collapse;}
+.orders-tbl th{font-size:0.58rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;padding:0.5rem 0.65rem;text-align:left;border-bottom:1px solid var(--border);}
+.orders-tbl td{padding:0.75rem 0.65rem;font-size:0.78rem;border-bottom:1px solid rgba(0,245,255,0.03);}
+.orders-tbl tr:last-child td{border-bottom:none;}
+.orders-tbl tr:hover td{background:rgba(0,245,255,0.02);}
+.sbadge{display:inline-flex;align-items:center;gap:0.28rem;padding:0.16rem 0.55rem;border-radius:100px;font-size:0.58rem;font-family:var(--fm);}
+.sbadge::before{content:'';width:4px;height:4px;border-radius:50%;}
+.sbadge.active{background:rgba(0,230,118,0.08);color:var(--green);border:1px solid rgba(0,230,118,0.2);}
+.sbadge.active::before{background:var(--green);}
+.sbadge.pending{background:rgba(255,152,0,0.08);color:var(--orange);border:1px solid rgba(255,152,0,0.2);}
+.sbadge.pending::before{background:var(--orange);}
+.sbadge.done{background:rgba(0,245,255,0.06);color:var(--cyan2);border:1px solid rgba(0,245,255,0.15);}
+.sbadge.done::before{background:var(--cyan);}
+.ucell{display:flex;align-items:center;gap:0.5rem;}
+.uav{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:700;flex-shrink:0;}
+.prog-item{margin-bottom:0.8rem;}
+.prog-hdr{display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.72rem;}
+.prog-lbl{color:var(--grey);}
+.prog-val{font-family:var(--fm);color:var(--cyan);}
+.prog-track{height:4px;background:rgba(255,255,255,0.05);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--cyan),var(--purple));}
+
+/* ══════════════════════════════════════
+   MODALS
+══════════════════════════════════════ */
+.modal-ov{position:fixed;inset:0;background:rgba(2,4,10,0.92);backdrop-filter:blur(12px);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:1rem;}
+.modal-ov.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark);border:1px solid var(--bpurple);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:2rem;position:relative;transform:scale(0.96);transition:transform 0.3s;}
+.modal-ov.open .modal{transform:scale(1);}
+.mcl{position:absolute;top:1.1rem;right:1.1rem;width:32px;height:32px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--grey);transition:all 0.2s;}
+.mcl:hover{color:var(--white);}
+.m-logo{font-family:var(--fd);font-size:1rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.4rem;}
+.m-sub{font-size:0.82rem;color:var(--grey);margin-bottom:1.75rem;}
+.mtabs{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:1.75rem;}
+.mtab{flex:1;padding:0.6rem;background:none;border:none;cursor:pointer;font-family:var(--fd);font-size:0.68rem;letter-spacing:0.1em;color:var(--grey);transition:all 0.2s;}
+.mtab.active{background:rgba(139,48,255,0.18);color:var(--white);}
+.role-sel{display:flex;gap:0.65rem;margin-bottom:1.4rem;}
+.role-opt{flex:1;padding:0.78rem;background:none;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-family:var(--fd);font-size:0.65rem;letter-spacing:0.06em;color:var(--grey);text-align:center;transition:all 0.2s;}
+.role-opt.active{border-color:var(--purple);background:rgba(139,48,255,0.1);color:var(--white);}
+.role-opt span{display:block;font-size:1.3rem;margin-bottom:0.35rem;}
+.fgrp{margin-bottom:1rem;}
+.flbl{font-size:0.6rem;font-family:var(--fm);letter-spacing:0.1em;color:var(--grey);margin-bottom:0.35rem;display:block;text-transform:uppercase;}
+.finp{width:100%;padding:0.7rem 1rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--fb);font-size:0.85rem;outline:none;transition:border-color 0.2s;}
+.finp:focus{border-color:rgba(0,245,255,0.35);}
+.finp::placeholder{color:var(--grey);}
+.finp-sel{width:100%;padding:0.7rem 1rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--fb);font-size:0.85rem;outline:none;}
+.finp-sel option{background:var(--dark);}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
+.mdivider{display:flex;align-items:center;gap:0.85rem;margin:1.1rem 0;}
+.mdivider::before,.mdivider::after{content:'';flex:1;height:1px;background:var(--border);}
+.mdivider span{font-size:0.68rem;color:var(--grey);font-family:var(--fm);}
+.soc-logins{display:flex;gap:0.65rem;}
+.soc-login{flex:1;padding:0.6rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--white);font-family:var(--fb);font-size:0.78rem;display:flex;align-items:center;justify-content:center;gap:0.45rem;transition:all 0.2s;}
+.soc-login:hover{border-color:rgba(0,245,255,0.25);background:var(--cglow);}
+.sub-btn{width:100%;padding:0.85rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));border:none;border-radius:9px;color:white;font-family:var(--fd);font-size:0.7rem;letter-spacing:0.12em;cursor:pointer;margin-top:0.25rem;transition:all 0.25s;box-shadow:0 0 22px rgba(139,48,255,0.3);}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 0 35px rgba(139,48,255,0.5);}
+.sub-btn.cyan-btn{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:var(--black);}
+
+/* MOBILE NAV */
+.mob-menu{display:none;position:fixed;top:65px;left:0;right:0;background:rgba(2,4,10,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:850;padding:1.25rem 2rem;flex-direction:column;gap:0.5rem;}
+.mob-menu.open{display:flex;}
+.mob-link{padding:0.65rem 0;font-family:var(--fm);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);cursor:pointer;border-bottom:1px solid rgba(0,245,255,0.04);transition:color 0.2s;}
+.mob-link:hover{color:var(--cyan);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .ham{display:flex;}
+  .pay-wrap{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .gigs-filters{display:none;}
+  .dash-sidebar{display:none;}
+  .dash-stats{grid-template-columns:1fr 1fr;}
+  .dash-grid2{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .hero-btns .btn-xl{flex:1;}
+  .dash-stats{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  section{padding:65px 1.25rem;}
+  .gigs-main{padding:1rem;}
+  .dash-main{padding:1rem;}
+}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg,var(--purple),var(--cyan2));color:white;padding:0.7rem 1.5rem;border-radius:100px;font-family:var(--fd);font-size:0.68rem;letter-spacing:0.08em;z-index:9999;transition:transform 0.4s;white-space:nowrap;box-shadow:0 10px 40px rgba(139,48,255,0.5);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">WEB3⚡WEAPON</div>
+  <ul class="nav-links">
+    <li class="nav-link active" id="nl-home" onclick="showPage('home')">Home</li>
+    <li class="nav-link" id="nl-gigs" onclick="showPage('gigs')">Browse Gigs</li>
+    <li class="nav-link" id="nl-dash" onclick="showPage('dashboard')">Dashboard</li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn btn-o" onclick="openModal('login')">Login</button>
+    <button class="btn btn-p" onclick="openModal('register')">Sign Up Free</button>
+    <div class="ham" onclick="toggleMob()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <div class="mob-link" onclick="showPage('home');toggleMob()">🏠 Home</div>
+  <div class="mob-link" onclick="showPage('gigs');toggleMob()">🔍 Browse Gigs</div>
+  <div class="mob-link" onclick="showPage('dashboard');toggleMob()">📊 Dashboard</div>
+  <div class="mob-link" onclick="openModal('login');toggleMob()">🔑 Login</div>
+  <div class="mob-link" onclick="openModal('register');toggleMob()">🚀 Sign Up Free</div>
+</div>
+
+<!-- ════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><div class="bdot"></div>🔗 Powered by Blockchain Technology</div>
+      <h1 class="hero-title">
+        <span class="ht1">Hire Top Web3 Experts or</span>
+        <span class="ht2">Sell Your Skills Worldwide</span>
+      </h1>
+      <p class="hero-sub">Secure decentralized freelance marketplace powered by crypto payments. Connect with the world's best blockchain developers, NFT designers, and Web3 specialists.</p>
+      <div class="hero-btns">
+        <button class="btn btn-c btn-xl" onclick="openModal('register')">🚀 Get Started Free</button>
+        <button class="btn btn-o btn-xl" onclick="showPage('gigs')">🔍 Explore Talent</button>
+        <button class="btn btn-p btn-xl" onclick="openModal('register')">💼 Become a Freelancer</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n" id="h1">0</div><div class="hstat-l">Active Freelancers</div></div>
+        <div class="hstat"><div class="hstat-n" id="h2">0</div><div class="hstat-l">Jobs Completed</div></div>
+        <div class="hstat"><div class="hstat-n" id="h3">0</div><div class="hstat-l">Crypto Paid Out</div></div>
+        <div class="hstat"><div class="hstat-n" id="h4">0</div><div class="hstat-l">Countries</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item"><span class="tdot"></span>Solidity Dev hired — $2,400 USDT</span>
+      <span class="ticker-item"><span class="tdot"></span>NFT Collection minted — 10,000 items</span>
+      <span class="ticker-item"><span class="tdot"></span>Pi Network payment verified ✓</span>
+      <span class="ticker-item"><span class="tdot"></span>Smart Contract audit done in 24hrs</span>
+      <span class="ticker-item"><span class="tdot"></span>TON Mini App launched on Telegram</span>
+      <span class="ticker-item"><span class="tdot"></span>New freelancer joined from Nigeria 🇳🇬</span>
+      <span class="ticker-item"><span class="tdot"></span>Solidity Dev hired — $2,400 USDT</span>
+      <span class="ticker-item"><span class="tdot"></span>NFT Collection minted — 10,000 items</span>
+      <span class="ticker-item"><span class="tdot"></span>Pi Network payment verified ✓</span>
+      <span class="ticker-item"><span class="tdot"></span>Smart Contract audit done in 24hrs</span>
+      <span class="ticker-item"><span class="tdot"></span>TON Mini App launched on Telegram</span>
+      <span class="ticker-item"><span class="tdot"></span>New freelancer joined from Nigeria 🇳🇬</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section style="background:var(--deep);">
+    <div class="sec-lbl text-c">// PROCESS</div>
+    <h2 class="sec-title text-c">How <span class="grad">Web3 Weapon</span> Works</h2>
+    <p class="sec-sub text-c">Simple, secure, and decentralized. Get started in minutes.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><h3>Create Account</h3><p>Register as freelancer or client. Connect your crypto wallet and complete verification.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>Post or Browse</h3><p>Clients post jobs; freelancers create gigs. AI matches the best talent to your project.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Secure Escrow</h3><p>Funds locked in smart contract escrow. Work begins after payment confirmed. Zero risk.</p></div>
+      <div class="step"><div class="step-num">04</div><h3>Get Paid in Crypto</h3><p>Funds release instantly on approval. Pi Network, USDT, SOL, BNB and more.</p></div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section>
+    <div class="sec-lbl">// MARKETPLACE</div>
+    <h2 class="sec-title">Browse by <span class="grad">Category</span></h2>
+    <p class="sec-sub">20+ specialized Web3 categories with thousands of verified experts</p>
+    <div class="cats">
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">📄</div><div class="cat-name">Smart Contracts</div><div class="cat-count">1,240 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🌐</div><div class="cat-name">Web3 Frontend</div><div class="cat-count">890 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🎨</div><div class="cat-name">NFT Design</div><div class="cat-count">2,100 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🔍</div><div class="cat-name">Blockchain Audit</div><div class="cat-count">340 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">📣</div><div class="cat-name">Crypto Marketing</div><div class="cat-count">780 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🪙</div><div class="cat-name">Token Creation</div><div class="cat-count">560 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🤖</div><div class="cat-name">Telegram Bots</div><div class="cat-count">920 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">☀️</div><div class="cat-name">Solana Dev</div><div class="cat-count">740 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">💎</div><div class="cat-name">TON Development</div><div class="cat-count">390 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">π</div><div class="cat-name">Pi Network Apps</div><div class="cat-count">210 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">⚡</div><div class="cat-name">AI Automation</div><div class="cat-count">1,050 gigs</div></div>
+      <div class="cat" onclick="showPage('gigs')"><div class="cat-ico">🔒</div><div class="cat-name">Cyber Security</div><div class="cat-count">280 gigs</div></div>
+    </div>
+  </section>
+
+  <!-- FEATURED FREELANCERS -->
+  <section style="background:var(--deep);">
+    <div class="sec-lbl">// TOP TALENT</div>
+    <h2 class="sec-title">Featured <span class="grad">Freelancers</span></h2>
+    <p class="sec-sub">Verified Web3 professionals ready to power your next project</p>
+    <div class="fgrid">
+      <div class="fcard" onclick="openModal('register')">
+        <div class="fc-hdr"><div class="fc-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK<div class="fc-dot"></div></div><div><div class="fc-name">Alex K.</div><div class="fc-role">Smart Contract Dev</div></div></div>
+        <div class="tags"><span class="tag">Solidity</span><span class="tag">EVM</span><span class="tag">DeFi</span><span class="tag">Audit</span></div>
+        <div class="fc-foot"><div><span class="fc-stars">★★★★★</span> <span class="fc-rate" style="font-size:0.72rem;color:var(--grey)">4.9 (47)</span></div><div class="fc-rate">From $200</div></div>
+      </div>
+      <div class="fcard" onclick="openModal('register')">
+        <div class="fc-hdr"><div class="fc-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">MN<div class="fc-dot"></div></div><div><div class="fc-name">Maria N.</div><div class="fc-role">NFT Artist & Designer</div></div></div>
+        <div class="tags"><span class="tag">NFT Art</span><span class="tag">Generative</span><span class="tag">Metadata</span></div>
+        <div class="fc-foot"><div><span class="fc-stars">★★★★★</span> <span class="fc-rate" style="font-size:0.72rem;color:var(--grey)">5.0 (89)</span></div><div class="fc-rate">From $80</div></div>
+      </div>
+      <div class="fcard" onclick="openModal('register')">
+        <div class="fc-hdr"><div class="fc-av" style="background:linear-gradient(135deg,#00c851,#007e33)">JO<div class="fc-dot"></div></div><div><div class="fc-name">James O.</div><div class="fc-role">Solana & TON Developer</div></div></div>
+        <div class="tags"><span class="tag">Rust</span><span class="tag">Solana</span><span class="tag">TON</span><span class="tag">Pi</span></div>
+        <div class="fc-foot"><div><span class="fc-stars">★★★★☆</span> <span class="fc-rate" style="font-size:0.72rem;color:var(--grey)">4.7 (31)</span></div><div class="fc-rate">From $150</div></div>
+      </div>
+      <div class="fcard" onclick="openModal('register')">
+        <div class="fc-hdr"><div class="fc-av" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">KM<div class="fc-dot"></div></div><div><div class="fc-name">Kwame M.</div><div class="fc-role">Pi Network Developer</div></div></div>
+        <div class="tags"><span class="tag">Pi Network</span><span class="tag">Pi SDK</span><span class="tag">React</span></div>
+        <div class="fc-foot"><div><span class="fc-stars">★★★★★</span> <span class="fc-rate" style="font-size:0.72rem;color:var(--grey)">4.8 (12)</span></div><div class="fc-rate">From $120</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section>
+    <div class="pay-wrap">
+      <div>
+        <div class="sec-lbl">// CRYPTO ONLY</div>
+        <h2 class="sec-title">Payments <span class="grad">Powered by Crypto</span></h2>
+        <p class="sec-sub">No banks. No middlemen. Instant cross-border payments with full transparency on-chain.</p>
+        <ul class="pay-list">
+          <li><span class="pcheck">✦</span> Smart contract escrow — funds locked until delivery</li>
+          <li><span class="pcheck">✦</span> Multi-chain support with QR code payments</li>
+          <li><span class="pcheck">✦</span> Instant withdrawals to any compatible wallet</li>
+          <li><span class="pcheck">✦</span> Full transaction history on-chain — always transparent</li>
+          <li><span class="pcheck">✦</span> Dispute resolution backed by DAO governance</li>
+        </ul>
+      </div>
+      <div>
+        <div class="chains">
+          <div class="chain rec"><div class="chain-ico" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">π</div><div><div class="chain-nm">Pi Network</div><div class="chain-sym">MAINNET</div></div><div class="rec-badge">RECOMMENDED</div></div>
+          <div class="chain"><div class="chain-ico" style="background:linear-gradient(135deg,#26a69a,#00796b)">₮</div><div><div class="chain-nm">USDT</div><div class="chain-sym">TRC-20</div></div></div>
+          <div class="chain"><div class="chain-ico" style="background:linear-gradient(135deg,#9945ff,#14f195)">◎</div><div><div class="chain-nm">Solana</div><div class="chain-sym">SOL</div></div></div>
+          <div class="chain"><div class="chain-ico" style="background:linear-gradient(135deg,#f0b90b,#ff6b35)">⬡</div><div><div class="chain-nm">BSC (BNB)</div><div class="chain-sym">Binance</div></div></div>
+          <div class="chain"><div class="chain-ico" style="background:linear-gradient(135deg,#0088cc,#00b4d8)">💎</div><div><div class="chain-nm">TON</div><div class="chain-sym">Telegram</div></div></div>
+          <div class="chain"><div class="chain-ico" style="background:linear-gradient(135deg,#627eea,#a855f7)">Ξ</div><div><div class="chain-nm">Ethereum</div><div class="chain-sym">ERC-20</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY -->
+  <section style="background:var(--deep);">
+    <div class="sec-lbl text-c">// PROTECTION</div>
+    <h2 class="sec-title text-c">Enterprise-Grade <span class="grad">Security</span></h2>
+    <div class="sec-grid">
+      <div class="seci"><div class="seci-ico">🛡️</div><h3>Smart Contract Escrow</h3><p>Funds locked in audited contracts. Only code runs the rules — no human access.</p></div>
+      <div class="seci"><div class="seci-ico">🔐</div><h3>End-to-End Encryption</h3><p>All messages and files transmitted with AES-256 encryption. Zero admin access.</p></div>
+      <div class="seci"><div class="seci-ico">🤖</div><h3>AI Scam Detection</h3><p>Real-time AI monitors suspicious patterns and fraudulent transactions before they occur.</p></div>
+      <div class="seci"><div class="seci-ico">🔑</div><h3>Multi-Factor Auth</h3><p>JWT + OTP + hardware key support. Every session authenticated with device fingerprinting.</p></div>
+      <div class="seci"><div class="seci-ico">🌐</div><h3>DDoS Protection</h3><p>Cloudflare infrastructure with rate limiting and automatic attack mitigation.</p></div>
+      <div class="seci"><div class="seci-ico">⚖️</div><h3>Dispute Resolution</h3><p>Community-governed disputes with evidence review. Fair outcomes backed by on-chain voting.</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <div class="sec-lbl text-c">// SOCIAL PROOF</div>
+    <h2 class="sec-title text-c">What Our <span class="grad">Users Say</span></h2>
+    <div class="tgrid">
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="ttext">"I earned 4,500 Pi in my first month selling smart contract templates. The escrow system is flawless."</div><div class="tauthor"><div class="tav" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div><div><div class="tname">Ahmed K.</div><div class="trole">Smart Contract Dev • 🇳🇬</div></div></div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="ttext">"Found an amazing Solana developer within hours. AI matching is spot-on. Delivered 2 days early!"</div><div class="tauthor"><div class="tav" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div><div><div class="tname">Luna M.</div><div class="trole">Startup Founder • 🇸🇬</div></div></div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="ttext">"Platform made it so easy to start on Web3. Verified wallet in minutes and landed my first gig same day."</div><div class="tauthor"><div class="tav" style="background:linear-gradient(135deg,#00c851,#007e33)">RP</div><div><div class="tname">Rahul P.</div><div class="trole">NFT Designer • 🇮🇳</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="background:var(--deep);">
+    <div class="sec-lbl text-c">// FAQ</div>
+    <h2 class="sec-title text-c">Common <span class="grad">Questions</span></h2>
+    <div class="faq-wrap">
+      <div class="faq" onclick="toggleFaq(this)"><div class="faq-q">What cryptocurrencies are accepted? <span class="faq-ico">+</span></div><div class="faq-a">Pi Network (recommended), USDT, Solana, TRON, BSC, TON, Ethereum, and Bitcoin. Pi Network gives a 2% fee discount.</div></div>
+      <div class="faq" onclick="toggleFaq(this)"><div class="faq-q">How does the escrow system work? <span class="faq-ico">+</span></div><div class="faq-a">Client's funds are locked in a smart contract escrow. The freelancer works knowing payment is secured. Upon delivery approval, funds release automatically. If dispute arises, our DAO resolves it.</div></div>
+      <div class="faq" onclick="toggleFaq(this)"><div class="faq-q">What are the platform fees? <span class="faq-ico">+</span></div><div class="faq-a">Web3 Weapon charges 10% on completed orders. Pi Network payments receive a 2% discount — making it just 8% for Pi users. Lowest fees in Web3 freelancing.</div></div>
+      <div class="faq" onclick="toggleFaq(this)"><div class="faq-q">Can I use the platform on mobile? <span class="faq-ico">+</span></div><div class="faq-a">Yes! Fully responsive and mobile-first. A PWA is available for installation on your phone for native-like experience.</div></div>
+      <div class="faq" onclick="toggleFaq(this)"><div class="faq-q">How do I get verified as a freelancer? <span class="faq-ico">+</span></div><div class="faq-a">Connect your crypto wallet, complete email verification, and optionally submit ID for verified badge. Verified freelancers get 3× more visibility in search results.</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="cta-box">
+      <div class="sec-lbl">// JOIN TODAY</div>
+      <h2>Ready to Enter the <span class="grad">Web3 Economy?</span></h2>
+      <p>Join 50,000+ freelancers and clients already building the decentralized future. Register free — no credit card needed.</p>
+      <div class="cta-btns">
+        <button class="btn btn-c btn-xl" onclick="openModal('register')">🚀 Start Free Today</button>
+        <button class="btn btn-p btn-xl" onclick="openModal('register')">💼 Post a Job</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section style="padding:50px 2rem;">
+    <div class="nl-inner">
+      <div class="nl-text"><h3>Stay Ahead of Web3 Trends</h3><p>Weekly insights on crypto jobs, top gigs, and marketplace news.</p></div>
+      <div class="nl-form">
+        <input type="email" class="nl-input" placeholder="Enter your email address">
+        <button class="btn btn-p" onclick="toast('Subscribed! 🎉')">Subscribe</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="fbrand">
+        <div class="logo" style="font-size:1.2rem;">WEB3⚡WEAPON</div>
+        <p>The ultimate decentralized freelance marketplace for Web3, blockchain, and crypto professionals worldwide.</p>
+      </div>
+      <div class="fcol"><h4>Platform</h4><ul><li><a onclick="showPage('gigs')">Browse Gigs</a></li><li><a onclick="openModal('register')">Post a Job</a></li><li><a onclick="openModal('register')">Become Freelancer</a></li><li><a onclick="toast('Enterprise page coming!')">Enterprise</a></li></ul></div>
+      <div class="fcol"><h4>Company</h4><ul><li><a onclick="toast('About page coming!')">About</a></li><li><a onclick="toast('Careers coming!')">Careers</a></li><li><a onclick="toast('Blog coming!')">Blog</a></li><li><a onclick="toast('Opening contact...')">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Legal</h4><ul><li><a onclick="toast('Privacy Policy coming!')">Privacy Policy</a></li><li><a onclick="toast('Terms coming!')">Terms of Service</a></li><li><a onclick="toast('Cookie Policy coming!')">Cookie Policy</a></li></ul></div>
+    </div>
+    <div class="footer-bot">
+      <p>© 2026 Web3 Weapon. All rights reserved. Built on decentralized infrastructure.</p>
+      <div class="socials">
+        <div class="soc" onclick="toast('Opening X/Twitter...')">𝕏</div>
+        <div class="soc" onclick="toast('Opening Telegram...')">✈️</div>
+        <div class="soc" onclick="toast('Opening Discord...')">💬</div>
+        <div class="soc" onclick="toast('Opening YouTube...')">▶</div>
+      </div>
+    </div>
+  </footer>
+</div><!-- /home page -->
+
+<!-- ════════════════════════════════════
+     GIGS PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-gigs">
+  <div class="gigs-hero">
+    <div class="sec-lbl">// MARKETPLACE</div>
+    <h2 class="sec-title" style="margin-bottom:0;">Find Top <span class="grad">Web3 Talent</span></h2>
+    <div class="search-box">
+      <input type="text" class="sb-input" id="gigSearch" placeholder="Search gigs, skills, or freelancers..." oninput="filterGigs()">
+      <button class="sb-btn" onclick="filterGigs()">🔍 SEARCH</button>
+    </div>
+    <div class="ptags">
+      <span class="ptag active" onclick="tagFilter(this,'')">All</span>
+      <span class="ptag" onclick="tagFilter(this,'Solidity')">Solidity</span>
+      <span class="ptag" onclick="tagFilter(this,'NFT')">NFT Art</span>
+      <span class="ptag" onclick="tagFilter(this,'Solana')">Solana</span>
+      <span class="ptag" onclick="tagFilter(this,'DeFi')">DeFi</span>
+      <span class="ptag" onclick="tagFilter(this,'Pi')">Pi Network</span>
+      <span class="ptag" onclick="tagFilter(this,'Bot')">Telegram Bot</span>
+      <span class="ptag" onclick="tagFilter(this,'TON')">TON</span>
+    </div>
+  </div>
+  <div class="gigs-layout">
+    <div class="gigs-filters">
+      <div class="filt-sec"><div class="filt-lbl">Category</div>
+        <label class="fopt"><input type="checkbox"> Smart Contracts <span class="fc-count">124</span></label>
+        <label class="fopt"><input type="checkbox"> NFT Design <span class="fc-count">210</span></label>
+        <label class="fopt"><input type="checkbox"> Web3 Dev <span class="fc-count">89</span></label>
+        <label class="fopt"><input type="checkbox"> Blockchain Audit <span class="fc-count">34</span></label>
+        <label class="fopt"><input type="checkbox"> Telegram Bots <span class="fc-count">92</span></label>
+      </div>
+      <div class="filt-sec"><div class="filt-lbl">Blockchain</div>
+        <label class="fopt"><input type="checkbox"> π Pi Network</label>
+        <label class="fopt"><input type="checkbox"> ◎ Solana</label>
+        <label class="fopt"><input type="checkbox"> Ξ Ethereum</label>
+        <label class="fopt"><input type="checkbox"> ⬡ BSC</label>
+        <label class="fopt"><input type="checkbox"> 💎 TON</label>
+      </div>
+      <div class="filt-sec"><div class="filt-lbl">Seller Status</div>
+        <label class="fopt"><input type="checkbox"> 🟢 Online Now</label>
+        <label class="fopt"><input type="checkbox"> ✓ Verified</label>
+        <label class="fopt"><input type="checkbox"> ⭐ Top Rated</label>
+      </div>
+    </div>
+    <div class="gigs-main">
+      <div class="res-bar">
+        <div class="res-count">Showing <strong id="gigCount">8</strong> gigs</div>
+        <select class="sort-sel"><option>Best Match</option><option>Most Popular</option><option>Price: Low to High</option><option>Highest Rated</option></select>
+      </div>
+      <div class="gigs-grid" id="gigsGrid">
+        <div class="gig-card" data-tags="Solidity EVM DeFi Audit" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#1a0533,#0d2045)"><div class="gtop-badge gbf">⭐ FEATURED</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>📄</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div><div class="gname">Alex K.</div><div class="glvl">PRO</div></div><div class="gig-title">I will develop and audit your smart contract on Ethereum, BSC or Solana</div><div class="gtags"><span class="gtag">Solidity</span><span class="gtag">EVM</span><span class="gtag">DeFi</span></div><div class="gig-foot"><div><span class="gstars">★★★★★</span><span class="grating"> 4.9</span><span class="gcnt"> (47)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$200</div></div></div></div></div>
+        <div class="gig-card" data-tags="NFT Art Generative Metadata" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#330b1a,#1a0033)"><div class="gtop-badge gbh">🔥 HOT</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>🎨</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">MN</div><div class="gname">Maria N.</div><div class="glvl">TOP</div></div><div class="gig-title">I will create a stunning 10,000 piece generative NFT collection with metadata</div><div class="gtags"><span class="gtag">NFT Art</span><span class="gtag">Generative</span></div><div class="gig-foot"><div><span class="gstars">★★★★★</span><span class="grating"> 5.0</span><span class="gcnt"> (89)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$80</div></div></div></div></div>
+        <div class="gig-card" data-tags="Rust Solana TON Anchor" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#0a2a1a,#052015)"><div class="gtop-badge gbn">✨ NEW</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>◎</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#00c851,#007e33)">JO</div><div class="gname">James O.</div><div class="glvl">PRO</div></div><div class="gig-title">I will build your Solana or TON dApp with Rust and Anchor framework</div><div class="gtags"><span class="gtag">Rust</span><span class="gtag">Solana</span><span class="gtag">TON</span></div><div class="gig-foot"><div><span class="gstars">★★★★☆</span><span class="grating"> 4.7</span><span class="gcnt"> (31)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$150</div></div></div></div></div>
+        <div class="gig-card" data-tags="Security Audit DeFi Report" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#1a1500,#2a1f00)"><div class="gtop-badge gbf">⭐ FEATURED</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>🔒</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DL</div><div class="gname">David L.</div><div class="glvl">ELITE</div></div><div class="gig-title">I will perform a complete security audit of your smart contract and DeFi protocol</div><div class="gtags"><span class="gtag">Security</span><span class="gtag">Audit</span><span class="gtag">DeFi</span></div><div class="gig-foot"><div><span class="gstars">★★★★★</span><span class="grating"> 5.0</span><span class="gcnt"> (23)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$500</div></div></div></div></div>
+        <div class="gig-card" data-tags="Telegram Bot Python Crypto" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#0d1f33,#051428)"><div class="gtop-badge gbh">🔥 HOT</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>🤖</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">FH</div><div class="gname">Fatima H.</div><div class="glvl">PRO</div></div><div class="gig-title">I will build a custom Telegram bot with crypto price alerts and wallet tracking</div><div class="gtags"><span class="gtag">Telegram</span><span class="gtag">Bot</span><span class="gtag">Crypto</span></div><div class="gig-foot"><div><span class="gstars">★★★★☆</span><span class="grating"> 4.6</span><span class="gcnt"> (18)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$80</div></div></div></div></div>
+        <div class="gig-card" data-tags="Pi Network Pi SDK Pioneer" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#1a0d26,#0d0726)"><div class="gtop-badge gbn">✨ NEW</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>π</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">KM</div><div class="gname">Kwame M.</div><div class="glvl">PRO</div></div><div class="gig-title">I will build Pi Network apps, Pi SDK integration, and Pi payment gateway</div><div class="gtags"><span class="gtag">Pi Network</span><span class="gtag">Pi SDK</span></div><div class="gig-foot"><div><span class="gstars">★★★★★</span><span class="grating"> 4.8</span><span class="gcnt"> (12)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$120</div></div></div></div></div>
+        <div class="gig-card" data-tags="Token ERC-20 BEP-20 DeFi" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#001a26,#001020)"><div class="gtop-badge gbf">⭐ FEATURED</div><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>🪙</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#f0b90b,#ff6b35)">RP</div><div class="gname">Rahul P.</div><div class="glvl">ELITE</div></div><div class="gig-title">I will create your ERC-20 BEP-20 token with tokenomics and liquidity setup</div><div class="gtags"><span class="gtag">Token</span><span class="gtag">ERC-20</span><span class="gtag">DeFi</span></div><div class="gig-foot"><div><span class="gstars">★★★★★</span><span class="grating"> 4.9</span><span class="gcnt"> (38)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$250</div></div></div></div></div>
+        <div class="gig-card" data-tags="Community Telegram Discord Growth" onclick="openModal('register')"><div class="gig-thumb" style="background:linear-gradient(135deg,#261500,#1a0d00)"><div class="gsave" onclick="event.stopPropagation();toggleGigSave(this)">🤍</div>📣</div><div class="gig-body"><div class="gseller"><div class="gav" style="background:linear-gradient(135deg,#ff9800,#e65100)">SA</div><div class="gname">Sofia A.</div><div class="glvl">TOP</div></div><div class="gig-title">I will manage your crypto project community on Telegram and Discord</div><div class="gtags"><span class="gtag">Community</span><span class="gtag">Telegram</span><span class="gtag">Discord</span></div><div class="gig-foot"><div><span class="gstars">★★★★☆</span><span class="grating"> 4.5</span><span class="gcnt"> (64)</span></div><div class="gprice"><div class="gfrom">FROM</div><div class="gpval">$40</div></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-layout">
+    <div class="dash-sidebar">
+      <div class="dash-user"><div class="du-av">AK<div class="du-dot"></div></div><div><div class="du-name">Ahmed Kabiru</div><div class="du-role">● FREELANCER PRO</div></div></div>
+      <div class="dnav-lbl">Main</div>
+      <div class="dnav-item active"><span class="dnav-ico">🏠</span> Overview</div>
+      <div class="dnav-item" onclick="toast('Opening gigs...')"><span class="dnav-ico">📋</span> My Gigs <span class="dnav-badge">8</span></div>
+      <div class="dnav-item" onclick="toast('Opening orders...')"><span class="dnav-ico">📦</span> Orders <span class="dnav-badge">3</span></div>
+      <div class="dnav-item" onclick="toast('Opening messages...')"><span class="dnav-ico">💬</span> Messages <span class="dnav-badge">12</span></div>
+      <div class="dnav-lbl">Account</div>
+      <div class="dnav-item" onclick="toast('Opening profile...')"><span class="dnav-ico">👤</span> Profile</div>
+      <div class="dnav-item" onclick="toast('Opening analytics...')"><span class="dnav-ico">📊</span> Analytics</div>
+      <div class="dnav-item" onclick="toast('Opening settings...')"><span class="dnav-ico">⚙️</span> Settings</div>
+      <div class="dnav-item" style="margin-top:auto;color:var(--red);" onclick="showPage('home')"><span class="dnav-ico">🚪</span> Logout</div>
+      <div style="height:1rem;"></div>
+      <div class="wallet-mini">
+        <div class="wm-lbl">// WALLET</div>
+        <div class="wm-bal">2,840 Pi</div>
+        <div class="wm-addr">pi_ak7x9...f4m2</div>
+        <div class="wm-btns">
+          <button class="wm-btn" onclick="toast('Deposit initiated!')">⬇ IN</button>
+          <button class="wm-btn" onclick="toast('Withdraw requested!')">⬆ OUT</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-title">Dashboard Overview</div>
+        <div class="role-sw">
+          <button class="rsw active" id="rsw-f" onclick="switchRole('freelancer')">FREELANCER</button>
+          <button class="rsw" id="rsw-c" onclick="switchRole('client')">CLIENT</button>
+        </div>
+      </div>
+      <!-- QUICK ACTIONS -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.85rem;margin-bottom:1.5rem;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,245,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'" onclick="toast('Opening gig creator...')"><div style="font-size:1.3rem;">➕</div><div style="font-size:0.62rem;font-family:var(--fd);color:var(--grey);margin-top:0.3rem;letter-spacing:0.05em;">New Gig</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,245,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'" onclick="showPage('gigs')"><div style="font-size:1.3rem;">🔍</div><div style="font-size:0.62rem;font-family:var(--fd);color:var(--grey);margin-top:0.3rem;letter-spacing:0.05em;">Find Jobs</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,245,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'" onclick="toast('Opening wallet...')"><div style="font-size:1.3rem;">💸</div><div style="font-size:0.62rem;font-family:var(--fd);color:var(--grey);margin-top:0.3rem;letter-spacing:0.05em;">Withdraw</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.85rem;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,245,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'" onclick="toast('Copying profile link...')"><div style="font-size:1.3rem;">🔗</div><div style="font-size:0.62rem;font-family:var(--fd);color:var(--grey);margin-top:0.3rem;letter-spacing:0.05em;">Share</div></div>
+      </div>
+      <!-- STATS -->
+      <div class="dash-stats">
+        <div class="ds c1"><div class="ds-lbl">Total Earnings</div><div class="ds-val" id="dv1">$0</div><div class="ds-chg">▲ 24% this month</div><div class="ds-ico">💰</div></div>
+        <div class="ds c2"><div class="ds-lbl">Active Orders</div><div class="ds-val" id="dv2">0</div><div class="ds-chg">▲ 3 new</div><div class="ds-ico">📦</div></div>
+        <div class="ds c3"><div class="ds-lbl">Completed Jobs</div><div class="ds-val" id="dv3">0</div><div class="ds-chg">▲ 98% completion</div><div class="ds-ico">✅</div></div>
+        <div class="ds c4"><div class="ds-lbl">Profile Views</div><div class="ds-val" id="dv4">0</div><div class="ds-chg">▲ 41% this week</div><div class="ds-ico">👁️</div></div>
+      </div>
+      <!-- CHART + PROFILE -->
+      <div class="dash-grid2">
+        <div class="dcard">
+          <div class="dcard-hdr"><div class="dcard-title">Earnings This Week</div><div class="dcard-act">Monthly ▾</div></div>
+          <div class="chart-bars">
+            <div class="bw"><div class="br p" style="height:40%"></div><div class="br-lbl">Mon</div></div>
+            <div class="bw"><div class="br p" style="height:65%"></div><div class="br-lbl">Tue</div></div>
+            <div class="bw"><div class="br c" style="height:90%"></div><div class="br-lbl">Wed</div></div>
+            <div class="bw"><div class="br p" style="height:55%"></div><div class="br-lbl">Thu</div></div>
+            <div class="bw"><div class="br p" style="height:75%"></div><div class="br-lbl">Fri</div></div>
+            <div class="bw"><div class="br c" style="height:95%"></div><div class="br-lbl">Sat</div></div>
+            <div class="bw"><div class="br p" style="height:50%"></div><div class="br-lbl">Sun</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:0.85rem;font-size:0.68rem;color:var(--grey);font-family:var(--fm);">
+            <span>Total: <span style="color:var(--cyan)">$1,410</span></span>
+            <span>Avg: <span style="color:var(--purple2)">$201/day</span></span>
+            <span>Best: <span style="color:var(--green)">Sat $285</span></span>
+          </div>
+        </div>
+        <div class="dcard">
+          <div class="dcard-hdr"><div class="dcard-title">Profile Health</div><div class="dcard-act">Optimize ›</div></div>
+          <div style="text-align:center;margin-bottom:1rem;">
+            <div style="width:72px;height:72px;margin:0 auto 0.65rem;position:relative;">
+              <svg width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg)">
+                <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(0,245,255,0.08)" stroke-width="5"/>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="35"/>
+                <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00f5ff"/><stop offset="100%" stop-color="#8b30ff"/></linearGradient></defs>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-family:var(--fd);font-size:0.95rem;font-weight:700;color:var(--cyan);">80%</div></div>
+            </div>
+          </div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Portfolio Uploads</span><span class="prog-val">67%</span></div><div class="prog-track"><div class="prog-fill" style="width:67%"></div></div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Skills Added</span><span class="prog-val">90%</span></div><div class="prog-track"><div class="prog-fill" style="width:90%"></div></div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Wallet Connected</span><span class="prog-val">✓</span></div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+        </div>
+      </div>
+      <!-- ORDERS TABLE -->
+      <div class="dcard">
+        <div class="dcard-hdr"><div class="dcard-title">Recent Orders</div><div class="dcard-act">View All ›</div></div>
+        <div style="overflow-x:auto;">
+          <table class="orders-tbl">
+            <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div class="ucell"><div class="uav" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>Luna M.</div></td><td style="color:var(--grey);font-size:0.75rem;">Smart Contract</td><td style="font-family:var(--fd);color:var(--cyan);font-size:0.78rem;">$400</td><td><span class="sbadge active">IN PROGRESS</span></td></tr>
+              <tr><td><div class="ucell"><div class="uav" style="background:linear-gradient(135deg,#00c851,#007e33)">RP</div>Rahul P.</div></td><td style="color:var(--grey);font-size:0.75rem;">NFT Design</td><td style="font-family:var(--fd);color:var(--cyan);font-size:0.78rem;">$150</td><td><span class="sbadge done">COMPLETED</span></td></tr>
+              <tr><td><div class="ucell"><div class="uav" style="background:linear-gradient(135deg,#00b4d8,#03045e)">SA</div>Sofia A.</div></td><td style="color:var(--grey);font-size:0.75rem;">Audit Report</td><td style="font-family:var(--fd);color:var(--cyan);font-size:0.78rem;">$600</td><td><span class="sbadge pending">PENDING</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-ov" id="authModal">
+  <div class="modal">
+    <div class="mcl" onclick="closeModal()">×</div>
+    <div class="m-logo">WEB3⚡WEAPON</div>
+    <div class="m-sub" id="mSub">Welcome back</div>
+    <div class="mtabs">
+      <button class="mtab active" id="mt-login" onclick="switchTab('login')">LOGIN</button>
+      <button class="mtab" id="mt-register" onclick="switchTab('register')">REGISTER</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="mLogin">
+      <div class="fgrp"><label class="flbl">Email</label><input type="email" class="finp" placeholder="you@example.com"></div>
+      <div class="fgrp"><label class="flbl">Password</label><input type="password" class="finp" placeholder="••••••••"></div>
+      <button class="sub-btn" onclick="loginSuccess()">🔑 LOGIN TO ACCOUNT</button>
+      <p style="text-align:center;font-size:0.75rem;color:var(--grey);margin-top:0.75rem;"><a href="#" style="color:var(--cyan);text-decoration:none;">Forgot Password?</a></p>
+      <div class="mdivider"><span>OR</span></div>
+      <div class="soc-logins"><button class="soc-login" onclick="loginSuccess()">🔗 Wallet Connect</button><button class="soc-login" onclick="loginSuccess()">G Google</button></div>
+    </div>
+    <!-- REGISTER -->
+    <div id="mReg" style="display:none;">
+      <div class="role-sel">
+        <button class="role-opt active" id="ro-f" onclick="selRole('freelancer')"><span>💼</span>FREELANCER</button>
+        <button class="role-opt" id="ro-c" onclick="selRole('client')"><span>🏢</span>CLIENT</button>
+      </div>
+      <div class="frow2">
+        <div class="fgrp"><label class="flbl">Full Name</label><input type="text" class="finp" placeholder="John Doe"></div>
+        <div class="fgrp"><label class="flbl">Username</label><input type="text" class="finp" placeholder="@username"></div>
+      </div>
+      <div class="fgrp"><label class="flbl">Email</label><input type="email" class="finp" placeholder="you@example.com"></div>
+      <div class="fgrp"><label class="flbl">Wallet Address (Optional)</label><input type="text" class="finp" placeholder="0x... or pi_wallet..."></div>
+      <div class="frow2">
+        <div class="fgrp"><label class="flbl">Password</label><input type="password" class="finp" placeholder="••••••••"></div>
+        <div class="fgrp"><label class="flbl">Country</label><select class="finp-sel"><option>Nigeria</option><option>India</option><option>USA</option><option>Philippines</option><option>Ghana</option><option>Kenya</option><option>Other</option></select></div>
+      </div>
+      <button class="sub-btn cyan-btn" onclick="registerSuccess()">🚀 CREATE FREE ACCOUNT</button>
+      <div class="mdivider"><span>OR SIGN UP WITH</span></div>
+      <div class="soc-logins"><button class="soc-login" onclick="registerSuccess()">🔗 Wallet Connect</button><button class="soc-login" onclick="registerSuccess()">G Google</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// PAGE NAVIGATION
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  const nl = document.getElementById('nl-'+id);
+  if(nl) nl.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='dashboard') startDashCounters();
+}
+
+// COUNTERS — HOME
+function animVal(id,target,prefix='',suffix='') {
+  const el=document.getElementById(id);if(!el)return;
+  let c=0;const step=target/70;
+  const t=setInterval(()=>{c=Math.min(c+step,target);
+    const v=target>1000?Math.floor(c).toLocaleString():Math.floor(c);
+    el.textContent=prefix+v+suffix;if(c>=target)clearInterval(t);},18);
+}
+setTimeout(()=>{
+  animVal('h1',52400);animVal('h2',148000);
+  animVal('h3',2800000,'$');animVal('h4',140);
+},600);
+
+// COUNTERS — DASHBOARD
+function startDashCounters(){
+  animVal('dv1',8420,'$');animVal('dv2',7);
+  animVal('dv3',142);animVal('dv4',3840);
+  setTimeout(()=>{
+    document.querySelectorAll('.br').forEach(b=>{
+      const h=b.style.height;b.style.height='0';
+      setTimeout(()=>b.style.height=h,100);
+    });
+  },200);
+}
+
+// ROLE SWITCH DASHBOARD
+function switchRole(r){
+  document.getElementById('rsw-f').classList.toggle('active',r==='freelancer');
+  document.getElementById('rsw-c').classList.toggle('active',r==='client');
+  toast(r==='freelancer'?'Freelancer View':'Client View');
+}
+
+// GIG FILTER
+function filterGigs(){
+  const q=document.getElementById('gigSearch').value.toLowerCase();
+  const cards=document.querySelectorAll('#gigsGrid .gig-card');
+  let count=0;
+  cards.forEach(c=>{
+    const tags=(c.dataset.tags||'').toLowerCase();
+    const title=c.querySelector('.gig-title')?.textContent.toLowerCase()||'';
+    const match=!q||tags.includes(q)||title.includes(q);
+    c.style.display=match?'':'none';
+    if(match)count++;
+  });
+  document.getElementById('gigCount').textContent=count;
+}
+function tagFilter(el,tag){
+  document.querySelectorAll('.ptag').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('gigSearch').value=tag;
+  filterGigs();
+}
+function toggleGigSave(btn){
+  const saved=btn.textContent==='❤️';
+  btn.textContent=saved?'🤍':'❤️';
+  toast(saved?'Removed from favorites':'Saved to favorites!');
+}
+
+// AUTH MODAL
+function openModal(tab){
+  document.getElementById('authModal').classList.add('open');
+  switchTab(tab);
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('authModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function switchTab(tab){
+  document.getElementById('mLogin').style.display=tab==='login'?'block':'none';
+  document.getElementById('mReg').style.display=tab==='register'?'block':'none';
+  document.getElementById('mt-login').classList.toggle('active',tab==='login');
+  document.getElementById('mt-register').classList.toggle('active',tab==='register');
+  document.getElementById('mSub').textContent=tab==='login'?'Welcome back to Web3 Weapon':'Join 50,000+ Web3 professionals';
+}
+function selRole(r){
+  document.getElementById('ro-f').classList.toggle('active',r==='freelancer');
+  document.getElementById('ro-c').classList.toggle('active',r==='client');
+}
+function loginSuccess(){closeModal();showPage('dashboard');startDashCounters();toast('🎉 Welcome back!');}
+function registerSuccess(){closeModal();showPage('dashboard');startDashCounters();toast('🚀 Account created! Welcome aboard!');}
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// FAQ
+function toggleFaq(el){
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.faq').forEach(f=>f.classList.remove('open'));
+  if(!was)el.classList.add('open');
+}
+
+// MOBILE MENU
+function toggleMob(){document.getElementById('mobMenu').classList.toggle('open');}
+
+// TOAST
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(()=>el.style.transform='translateX(-50%) translateY(100px)',3000);
+}
+</script>
+</body>
+</html>
