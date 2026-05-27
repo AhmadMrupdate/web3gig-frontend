@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Weapon — Job Board & Chat & Payments</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#02040a;--deep:#050d1f;--dark:#0a1628;--mid:#0d2045;
+  --purple:#8b30ff;--purple2:#a855f7;--cyan:#00f5ff;--cyan2:#00c8d4;
+  --white:#f0f4ff;--grey:#8899bb;--grey2:#4a5568;
+  --border:rgba(0,245,255,0.1);--bpurple:rgba(139,48,255,0.2);
+  --card:rgba(10,22,40,0.9);--cglow:rgba(0,245,255,0.08);--pglow:rgba(139,48,255,0.12);
+  --green:#00e676;--yellow:#ffd700;--red:#ff4444;--orange:#ff9800;
+  --fd:'Orbitron',sans-serif;--fb:'Exo 2',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.02) 1px,transparent 1px);
+  background-size:50px 50px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:800;height:64px;
+  background:rgba(2,4,10,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:relative;z-index:900;}
+.logo{font-family:var(--fd);font-size:1.1rem;font-weight:900;letter-spacing:0.08em;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{padding:0 1.25rem;height:64px;display:flex;align-items:center;
+  font-family:var(--fm);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--grey);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.nav-tab:hover{color:var(--white);}
+.nav-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.nav-right{display:flex;gap:0.75rem;align-items:center;}
+.btn{font-family:var(--fd);font-size:0.62rem;letter-spacing:0.12em;padding:0.55rem 1.2rem;border-radius:6px;cursor:pointer;border:none;transition:all 0.25s;}
+.btn-o{background:transparent;border:1px solid rgba(0,245,255,0.35);color:var(--cyan);}
+.btn-o:hover{background:var(--cglow);}
+.btn-p{background:linear-gradient(135deg,var(--purple),#5b21b6);color:#fff;box-shadow:0 0 18px rgba(139,48,255,0.35);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(139,48,255,0.55);}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:var(--black);font-weight:700;}
+.btn-c:hover{box-shadow:0 0 25px rgba(0,245,255,0.4);}
+
+/* PAGES */
+.page{display:none;position:relative;z-index:1;}
+.page.active{display:block;}
+
+/* ═══════════════════════════
+   JOB BOARD
+═══════════════════════════ */
+.jb-hero{padding:3rem 2rem 2rem;text-align:center;
+  background:linear-gradient(180deg,rgba(0,245,255,0.04),transparent);
+  border-bottom:1px solid var(--border);}
+.jb-label{font-family:var(--fm);font-size:0.68rem;color:var(--cyan);letter-spacing:0.2em;margin-bottom:0.75rem;}
+.jb-title{font-family:var(--fd);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:1.5rem;}
+.jb-title span{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+.jb-search{display:flex;max-width:750px;margin:0 auto 1.5rem;gap:0.75rem;flex-wrap:wrap;}
+.jb-input{flex:1;min-width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.2);
+  border-radius:10px;padding:0.85rem 1.25rem;color:var(--white);font-family:var(--fb);font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+.jb-input:focus{border-color:var(--cyan);}
+.jb-input::placeholder{color:var(--grey);}
+
+.jb-stats-row{display:flex;gap:2rem;justify-content:center;margin-bottom:0;flex-wrap:wrap;}
+.jb-stat{text-align:center;}
+.jb-stat-n{font-family:var(--fd);font-size:1.3rem;font-weight:700;color:var(--cyan);}
+.jb-stat-l{font-size:0.65rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;}
+
+.jb-layout{display:flex;min-height:calc(100vh - 260px);}
+
+/* JOB SIDEBAR */
+.jb-sidebar{width:240px;min-width:240px;background:var(--deep);border-right:1px solid var(--border);
+  padding:1.25rem;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;}
+.fs-label{font-size:0.6rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.6rem;}
+.fs-section{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.fs-section:last-child{border-bottom:none;}
+.fs-opt{display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;cursor:pointer;font-size:0.78rem;color:var(--grey);transition:color 0.2s;}
+.fs-opt:hover{color:var(--white);}
+.fs-opt input[type=checkbox]{appearance:none;width:14px;height:14px;border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:all 0.2s;flex-shrink:0;position:relative;}
+.fs-opt input[type=checkbox]:checked{background:var(--purple);border-color:var(--purple);}
+.fs-opt input[type=checkbox]:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.55rem;color:white;}
+.fc{margin-left:auto;font-size:0.6rem;font-family:var(--fm);color:var(--grey2);}
+
+/* JOB MAIN */
+.jb-main{flex:1;padding:1.5rem 2rem;}
+.jb-controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
+.jb-count{font-size:0.82rem;color:var(--grey);}
+.jb-count strong{color:var(--white);font-family:var(--fd);}
+.jb-sort{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;
+  padding:0.5rem 1rem;color:var(--white);font-family:var(--fm);font-size:0.68rem;cursor:pointer;outline:none;}
+.jb-sort option{background:var(--dark);}
+
+/* JOB CARDS */
+.jobs-list{display:flex;flex-direction:column;gap:1rem;}
+.job-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:1.5rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;
+  animation:fadeUp 0.5s ease both;}
+.job-card:hover{border-color:rgba(0,245,255,0.3);transform:translateX(4px);box-shadow:0 10px 40px rgba(0,245,255,0.06);}
+.job-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--purple),var(--cyan));border-radius:2px 0 0 2px;opacity:0;transition:opacity 0.3s;}
+.job-card:hover::before{opacity:1;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+.job-card:nth-child(1){animation-delay:0.05s;}
+.job-card:nth-child(2){animation-delay:0.1s;}
+.job-card:nth-child(3){animation-delay:0.15s;}
+.job-card:nth-child(4){animation-delay:0.2s;}
+.job-card:nth-child(5){animation-delay:0.25s;}
+
+.job-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.85rem;gap:1rem;}
+.job-title-row{flex:1;}
+.job-title{font-family:var(--fd);font-size:0.92rem;font-weight:700;margin-bottom:0.4rem;line-height:1.4;}
+.job-client{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:var(--grey);}
+.job-client-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;}
+.job-badge{padding:0.25rem 0.75rem;border-radius:100px;font-size:0.6rem;font-family:var(--fm);letter-spacing:0.08em;flex-shrink:0;}
+.job-badge.open{background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);color:var(--green);}
+.job-badge.urgent{background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:var(--red);}
+.job-badge.featured{background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:var(--yellow);}
+
+.job-desc{font-size:0.83rem;color:var(--grey);line-height:1.6;margin-bottom:1rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+.job-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.jtag{padding:0.2rem 0.65rem;background:rgba(139,48,255,0.08);border:1px solid rgba(139,48,255,0.2);
+  border-radius:100px;font-size:0.62rem;font-family:var(--fm);color:var(--purple2);letter-spacing:0.04em;}
+
+.job-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
+.job-meta-left{display:flex;gap:1.25rem;font-size:0.72rem;color:var(--grey);font-family:var(--fm);}
+.job-meta-left span{display:flex;align-items:center;gap:0.3rem;}
+.job-budget{font-family:var(--fd);font-size:1rem;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.job-actions{display:flex;gap:0.5rem;}
+.apply-btn{padding:0.5rem 1.25rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:8px;color:white;font-family:var(--fd);font-size:0.62rem;
+  letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
+.apply-btn:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(139,48,255,0.4);}
+.save-job{padding:0.5rem 0.75rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:8px;color:var(--grey);font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.save-job:hover{border-color:var(--red);color:var(--red);}
+
+/* POST JOB MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(2,4,10,0.92);backdrop-filter:blur(12px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;padding:1rem;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark);border:1px solid var(--bpurple);border-radius:18px;
+  width:100%;max-width:620px;max-height:90vh;overflow-y:auto;
+  transform:scale(0.96);transition:transform 0.3s;padding:2rem;position:relative;}
+.modal-overlay.open .modal{transform:scale(1);}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;width:34px;height:34px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--grey);transition:all 0.2s;}
+.modal-close:hover{color:var(--white);border-color:var(--cyan);}
+.modal-title{font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:0.5rem;}
+.modal-sub{font-size:0.8rem;color:var(--grey);margin-bottom:1.75rem;}
+.form-group{margin-bottom:1.1rem;}
+.form-label{font-size:0.62rem;font-family:var(--fm);letter-spacing:0.12em;color:var(--grey);margin-bottom:0.4rem;display:block;text-transform:uppercase;}
+.form-input,.form-select,.form-textarea{width:100%;padding:0.75rem 1rem;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;
+  color:var(--white);font-family:var(--fb);font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(0,245,255,0.4);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--grey);}
+.form-select option{background:var(--dark);}
+.form-textarea{resize:vertical;min-height:100px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.chain-select{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;}
+.chain-opt{padding:0.35rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:100px;font-size:0.65rem;font-family:var(--fm);color:var(--grey);cursor:pointer;transition:all 0.2s;}
+.chain-opt:hover,.chain-opt.sel{background:rgba(139,48,255,0.15);border-color:var(--purple);color:var(--purple2);}
+.submit-btn{width:100%;padding:0.9rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;color:white;font-family:var(--fd);font-size:0.72rem;
+  letter-spacing:0.12em;cursor:pointer;transition:all 0.25s;box-shadow:0 0 25px rgba(139,48,255,0.35);}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(139,48,255,0.55);}
+
+/* ═══════════════════════════
+   LIVE CHAT
+═══════════════════════════ */
+#chatPage{height:calc(100vh - 64px);display:none;}
+#chatPage.active{display:flex;}
+.chat-layout{display:flex;width:100%;height:100%;}
+
+/* CHAT SIDEBAR */
+.chat-sidebar{width:300px;min-width:300px;background:var(--deep);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.chat-sidebar-top{padding:1rem;border-bottom:1px solid var(--border);}
+.chat-search{display:flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.75rem;}
+.chat-search input{background:none;border:none;color:var(--white);font-family:var(--fb);font-size:0.82rem;outline:none;flex:1;}
+.chat-search input::placeholder{color:var(--grey);}
+.conv-list{flex:1;overflow-y:auto;}
+.conv-item{display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;
+  cursor:pointer;transition:background 0.2s;border-bottom:1px solid rgba(0,245,255,0.04);}
+.conv-item:hover,.conv-item.active{background:rgba(139,48,255,0.08);}
+.conv-item.active{border-left:3px solid var(--purple);}
+.conv-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;position:relative;}
+.conv-online{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--green);border:2px solid var(--deep);border-radius:50%;}
+.conv-info{flex:1;min-width:0;}
+.conv-name{font-size:0.82rem;font-weight:600;margin-bottom:0.2rem;display:flex;justify-content:space-between;}
+.conv-time{font-size:0.6rem;color:var(--grey);font-family:var(--fm);}
+.conv-msg{font-size:0.72rem;color:var(--grey);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-badge{width:18px;height:18px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-family:var(--fm);flex-shrink:0;}
+
+/* CHAT MAIN */
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.chat-header{height:65px;border-bottom:1px solid var(--border);padding:0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-user{display:flex;align-items:center;gap:0.75rem;}
+.chat-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;}
+.chat-user-name{font-family:var(--fd);font-size:0.82rem;font-weight:600;}
+.chat-user-status{font-size:0.65rem;color:var(--green);font-family:var(--fm);margin-top:0.1rem;}
+.chat-actions{display:flex;gap:0.5rem;}
+.chat-icon-btn{width:36px;height:36px;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.2s;}
+.chat-icon-btn:hover{border-color:rgba(0,245,255,0.3);background:var(--cglow);}
+
+/* ORDER CARD in chat */
+.order-info-card{margin:0 1.5rem;padding:0.85rem 1.1rem;background:rgba(139,48,255,0.08);
+  border:1px solid rgba(139,48,255,0.25);border-radius:10px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.oic-left{font-size:0.75rem;}
+.oic-title{font-family:var(--fd);font-size:0.72rem;margin-bottom:0.2rem;}
+.oic-meta{color:var(--grey);font-family:var(--fm);font-size:0.62rem;}
+.oic-right{display:flex;gap:0.5rem;}
+.oic-btn{padding:0.35rem 0.75rem;border-radius:6px;font-family:var(--fd);font-size:0.6rem;cursor:pointer;letter-spacing:0.08em;border:none;}
+.oic-btn.green{background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.3);color:var(--green);}
+.oic-btn.red{background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:var(--red);}
+
+/* MESSAGES */
+.messages-area{flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1rem;}
+.msg{display:flex;gap:0.65rem;max-width:75%;}
+.msg.sent{flex-direction:row-reverse;align-self:flex-end;}
+.msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;align-self:flex-end;}
+.msg-bubble{padding:0.75rem 1rem;border-radius:14px;font-size:0.83rem;line-height:1.6;position:relative;}
+.msg.recv .msg-bubble{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:4px 14px 14px 14px;}
+.msg.sent .msg-bubble{background:linear-gradient(135deg,var(--purple),#5b21b6);border-radius:14px 4px 14px 14px;color:white;}
+.msg-time{font-size:0.58rem;color:var(--grey);font-family:var(--fm);margin-top:0.3rem;text-align:right;}
+.msg.recv .msg-time{text-align:left;}
+
+/* File message */
+.file-msg{display:flex;align-items:center;gap:0.65rem;padding:0.65rem;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;margin-top:0.5rem;cursor:pointer;}
+.file-icon{font-size:1.3rem;}
+.file-name{font-size:0.75rem;font-family:var(--fm);}
+.file-size{font-size:0.62rem;color:var(--grey);}
+
+/* Date separator */
+.date-sep{text-align:center;font-size:0.62rem;color:var(--grey);font-family:var(--fm);
+  letter-spacing:0.1em;padding:0.5rem 0;position:relative;}
+.date-sep::before,.date-sep::after{content:'';position:absolute;top:50%;width:35%;height:1px;background:var(--border);}
+.date-sep::before{left:0;}.date-sep::after{right:0;}
+
+/* Typing indicator */
+.typing{display:flex;align-items:center;gap:0.65rem;opacity:0.7;}
+.typing-dots{display:flex;gap:3px;}
+.typing-dot{width:6px;height:6px;background:var(--grey);border-radius:50%;animation:typingBounce 1.2s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes typingBounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-6px);}}
+
+/* CHAT INPUT */
+.chat-input-area{border-top:1px solid var(--border);padding:1rem 1.5rem;flex-shrink:0;}
+.chat-toolbar{display:flex;gap:0.5rem;margin-bottom:0.75rem;}
+.tool-btn{width:32px;height:32px;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:0.85rem;transition:all 0.2s;}
+.tool-btn:hover{border-color:rgba(0,245,255,0.3);background:var(--cglow);}
+.chat-input-row{display:flex;gap:0.75rem;align-items:flex-end;}
+.chat-textarea{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:10px;padding:0.75rem 1rem;color:var(--white);font-family:var(--fb);font-size:0.88rem;
+  outline:none;resize:none;max-height:120px;transition:border-color 0.2s;line-height:1.5;}
+.chat-textarea:focus{border-color:rgba(0,245,255,0.4);}
+.chat-textarea::placeholder{color:var(--grey);}
+.send-btn{width:44px;height:44px;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.1rem;transition:all 0.2s;flex-shrink:0;}
+.send-btn:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(139,48,255,0.4);}
+
+/* Emoji picker */
+.emoji-picker{background:var(--dark);border:1px solid var(--border);border-radius:10px;
+  padding:0.75rem;display:none;flex-wrap:wrap;gap:0.25rem;max-width:220px;
+  position:absolute;bottom:100%;margin-bottom:0.5rem;}
+.emoji-picker.open{display:flex;}
+.ep-emoji{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:4px;font-size:1rem;transition:background 0.15s;}
+.ep-emoji:hover{background:rgba(255,255,255,0.1);}
+
+/* ═══════════════════════════
+   PAYMENT / WALLET
+═══════════════════════════ */
+.pay-layout{padding:2rem;max-width:1200px;margin:0 auto;}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+.pay-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1.5rem;}
+
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;animation:fadeUp 0.5s ease both;}
+.pcard-title{font-family:var(--fd);font-size:0.82rem;font-weight:700;letter-spacing:0.06em;margin-bottom:1.25rem;
+  display:flex;align-items:center;justify-content:space-between;}
+.pcard-action{font-size:0.65rem;color:var(--cyan);cursor:pointer;font-family:var(--fm);}
+
+/* Wallet card big */
+.wallet-big{background:linear-gradient(135deg,rgba(139,48,255,0.2),rgba(0,245,255,0.08));
+  border:1px solid rgba(139,48,255,0.35);border-radius:18px;padding:2rem;
+  position:relative;overflow:hidden;animation:fadeUp 0.5s ease both;}
+.wallet-big::before{content:'';position:absolute;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(139,48,255,0.15),transparent 70%);
+  top:-100px;right:-100px;pointer-events:none;}
+.wb-label{font-family:var(--fm);font-size:0.65rem;color:var(--grey);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.5rem;}
+.wb-balance{font-family:var(--fd);font-size:2.5rem;font-weight:900;
+  background:linear-gradient(135deg,var(--cyan),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.35rem;}
+.wb-usd{font-size:0.85rem;color:var(--grey);font-family:var(--fm);margin-bottom:1.5rem;}
+.wb-addr{font-family:var(--fm);font-size:0.7rem;color:var(--grey);
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;
+  padding:0.5rem 0.85rem;display:inline-flex;align-items:center;gap:0.5rem;cursor:pointer;margin-bottom:1.5rem;}
+.wb-addr:hover{border-color:rgba(0,245,255,0.3);}
+.wb-actions{display:flex;gap:0.75rem;flex-wrap:wrap;}
+.wb-btn{padding:0.65rem 1.5rem;border-radius:8px;font-family:var(--fd);font-size:0.65rem;letter-spacing:0.12em;cursor:pointer;border:none;transition:all 0.25s;}
+.wb-btn.deposit{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:var(--black);font-weight:700;}
+.wb-btn.withdraw{background:linear-gradient(135deg,var(--purple),#5b21b6);color:white;}
+.wb-btn.send{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--white);}
+.wb-btn:hover{transform:translateY(-1px);}
+
+/* Chain balances */
+.chain-row{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.chain-row:last-child{border-bottom:none;}
+.chain-left{display:flex;align-items:center;gap:0.75rem;}
+.chain-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;flex-shrink:0;}
+.chain-nm{font-family:var(--fd);font-size:0.75rem;font-weight:600;}
+.chain-sym{font-size:0.62rem;color:var(--grey);font-family:var(--fm);}
+.chain-right{text-align:right;}
+.chain-val{font-family:var(--fd);font-size:0.8rem;color:var(--cyan);}
+.chain-usd{font-size:0.62rem;color:var(--grey);font-family:var(--fm);}
+.chain-chg{font-size:0.62rem;padding:0.1rem 0.4rem;border-radius:4px;font-family:var(--fm);margin-left:0.5rem;}
+.chain-chg.up{background:rgba(0,230,118,0.1);color:var(--green);}
+.chain-chg.dn{background:rgba(255,68,68,0.1);color:var(--red);}
+
+/* Transaction table */
+.tx-table{width:100%;border-collapse:collapse;}
+.tx-table th{font-size:0.6rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.12em;text-transform:uppercase;padding:0.6rem 0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.tx-table td{padding:0.85rem 0.5rem;font-size:0.8rem;border-bottom:1px solid rgba(0,245,255,0.03);}
+.tx-table tr:last-child td{border-bottom:none;}
+.tx-table tr:hover td{background:rgba(0,245,255,0.02);}
+.tx-type{display:flex;align-items:center;gap:0.5rem;}
+.tx-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;}
+.tx-icon.in{background:rgba(0,230,118,0.12);}
+.tx-icon.out{background:rgba(255,68,68,0.1);}
+.tx-icon.escrow{background:rgba(139,48,255,0.12);}
+.tx-name{font-size:0.78rem;}
+.tx-hash{font-size:0.62rem;color:var(--grey);font-family:var(--fm);}
+.tx-amt{font-family:var(--fd);font-size:0.82rem;}
+.tx-amt.in{color:var(--green);}
+.tx-amt.out{color:var(--red);}
+.tx-status{font-size:0.62rem;font-family:var(--fm);padding:0.15rem 0.55rem;border-radius:100px;}
+.tx-status.confirmed{background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);color:var(--green);}
+.tx-status.pending{background:rgba(255,152,0,0.1);border:1px solid rgba(255,152,0,0.25);color:var(--orange);}
+
+/* SEND/RECEIVE FORM */
+.send-form{display:flex;flex-direction:column;gap:1rem;}
+.qr-box{width:120px;height:120px;background:white;border-radius:10px;margin:0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:#333;
+  font-family:var(--fm);text-align:center;padding:0.5rem;border:4px solid white;
+  background:repeating-linear-gradient(45deg,#eee,#eee 2px,white 2px,white 8px);}
+.copy-btn{padding:0.5rem 1rem;background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.25);
+  border-radius:8px;color:var(--cyan);font-family:var(--fm);font-size:0.65rem;cursor:pointer;transition:all 0.2s;width:100%;}
+.copy-btn:hover{background:rgba(0,245,255,0.15);}
+
+/* Escrow tracker */
+.escrow-item{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.75rem;}
+.escrow-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;}
+.escrow-title{font-family:var(--fd);font-size:0.78rem;font-weight:600;}
+.escrow-amount{font-family:var(--fd);font-size:0.9rem;color:var(--cyan);}
+.escrow-meta{font-size:0.68rem;color:var(--grey);font-family:var(--fm);margin-bottom:0.65rem;}
+.prog-track{height:5px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;margin-bottom:0.5rem;}
+.prog-fill{height:100%;border-radius:100px;}
+.prog-fill.cyan{background:linear-gradient(90deg,var(--cyan),var(--purple));}
+.prog-fill.orange{background:var(--orange);}
+.escrow-actions{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.esc-btn{padding:0.35rem 0.85rem;border-radius:6px;font-family:var(--fd);font-size:0.6rem;cursor:pointer;letter-spacing:0.08em;border:none;}
+.esc-btn.release{background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.3);color:var(--green);}
+.esc-btn.dispute{background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:var(--red);}
+
+/* MOBILE */
+@media(max-width:900px){
+  .jb-sidebar{display:none;}
+  .chat-sidebar{width:100%;position:absolute;z-index:10;transform:translateX(-100%);transition:transform 0.3s;}
+  .chat-sidebar.mob-open{transform:translateX(0);}
+  .pay-grid,.pay-grid-3{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .nav-tab{padding:0 0.75rem;font-size:0.6rem;}
+  .pay-layout{padding:1rem;}
+}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--purple),var(--cyan2));color:white;
+  padding:0.7rem 1.5rem;border-radius:100px;font-family:var(--fd);font-size:0.68rem;
+  letter-spacing:0.08em;z-index:9999;transition:transform 0.4s;white-space:nowrap;
+  box-shadow:0 10px 40px rgba(139,48,255,0.5);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('jobBoard')">WEB3⚡WEAPON</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" id="tab-jobBoard" onclick="showPage('jobBoard')">📋 Job Board</div>
+    <div class="nav-tab" id="tab-chatPage" onclick="showPage('chatPage')">💬 Messages <span style="background:var(--purple);color:white;font-size:0.55rem;padding:0.1rem 0.4rem;border-radius:100px;margin-left:0.35rem;font-family:var(--fm);">3</span></div>
+    <div class="nav-tab" id="tab-payPage" onclick="showPage('payPage')">💰 Wallet</div>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-o" onclick="toast('Opening gig page...')">Browse Gigs</button>
+    <button class="btn btn-p" onclick="openJobModal()">+ Post Job</button>
+  </div>
+</nav>
+
+<!-- ═══ JOB BOARD ═══ -->
+<div class="page active" id="jobBoard">
+  <div class="jb-hero">
+    <div class="jb-label">// JOB BOARD</div>
+    <h1 class="jb-title">Find Your Next <span>Web3 Project</span></h1>
+    <div class="jb-search">
+      <input type="text" class="jb-input" placeholder="🔍  Search jobs, skills, or keywords...">
+      <input type="text" class="jb-input" placeholder="📍  Location or Remote" style="max-width:200px;">
+      <button class="btn btn-p" style="padding:0.85rem 1.5rem;">Search</button>
+    </div>
+    <div class="jb-stats-row">
+      <div class="jb-stat"><div class="jb-stat-n">2,840</div><div class="jb-stat-l">Active Jobs</div></div>
+      <div class="jb-stat"><div class="jb-stat-n">$4.2M</div><div class="jb-stat-l">Total Budget</div></div>
+      <div class="jb-stat"><div class="jb-stat-n">142</div><div class="jb-stat-l">Posted Today</div></div>
+    </div>
+  </div>
+
+  <div class="jb-layout">
+    <aside class="jb-sidebar">
+      <div class="fs-section">
+        <div class="fs-label">Job Type</div>
+        <label class="fs-opt"><input type="checkbox" checked> Fixed Price <span class="fc">1,840</span></label>
+        <label class="fs-opt"><input type="checkbox"> Hourly Rate <span class="fc">620</span></label>
+        <label class="fs-opt"><input type="checkbox"> Full-Time <span class="fc">380</span></label>
+      </div>
+      <div class="fs-section">
+        <div class="fs-label">Experience</div>
+        <label class="fs-opt"><input type="checkbox"> Entry Level <span class="fc">420</span></label>
+        <label class="fs-opt"><input type="checkbox" checked> Intermediate <span class="fc">1,240</span></label>
+        <label class="fs-opt"><input type="checkbox"> Expert <span class="fc">1,180</span></label>
+      </div>
+      <div class="fs-section">
+        <div class="fs-label">Budget Range</div>
+        <label class="fs-opt"><input type="checkbox"> Under $100</label>
+        <label class="fs-opt"><input type="checkbox"> $100 – $500</label>
+        <label class="fs-opt"><input type="checkbox" checked> $500 – $2,000</label>
+        <label class="fs-opt"><input type="checkbox"> $2,000+</label>
+      </div>
+      <div class="fs-section">
+        <div class="fs-label">Blockchain</div>
+        <label class="fs-opt"><input type="checkbox"> π Pi Network</label>
+        <label class="fs-opt"><input type="checkbox"> ◎ Solana</label>
+        <label class="fs-opt"><input type="checkbox" checked> Ξ Ethereum</label>
+        <label class="fs-opt"><input type="checkbox"> ⬡ BSC</label>
+        <label class="fs-opt"><input type="checkbox"> 💎 TON</label>
+      </div>
+      <div class="fs-section">
+        <div class="fs-label">Skills</div>
+        <label class="fs-opt"><input type="checkbox" checked> Solidity <span class="fc">480</span></label>
+        <label class="fs-opt"><input type="checkbox"> Rust <span class="fc">210</span></label>
+        <label class="fs-opt"><input type="checkbox"> React/Next.js <span class="fc">390</span></label>
+        <label class="fs-opt"><input type="checkbox"> Python <span class="fc">280</span></label>
+        <label class="fs-opt"><input type="checkbox"> Web3.js <span class="fc">320</span></label>
+      </div>
+    </aside>
+
+    <div class="jb-main">
+      <div class="jb-controls">
+        <div class="jb-count">Showing <strong>142</strong> jobs matching your criteria</div>
+        <select class="jb-sort">
+          <option>Most Recent</option>
+          <option>Highest Budget</option>
+          <option>Most Proposals</option>
+          <option>Best Match</option>
+        </select>
+      </div>
+
+      <div class="jobs-list">
+
+        <div class="job-card">
+          <div class="job-top">
+            <div class="job-title-row">
+              <div class="job-title">Senior Solidity Developer for DeFi Yield Farming Protocol</div>
+              <div class="job-client"><div class="job-client-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">LM</div>Luna M. • ⭐ 4.9 (28 hires) • Verified Client</div>
+            </div>
+            <span class="job-badge featured">⭐ FEATURED</span>
+          </div>
+          <div class="job-desc">Looking for an experienced Solidity developer to build a yield farming protocol with auto-compounding, multiple reward tokens, and emergency withdrawal functions. Must have DeFi experience and security audit knowledge.</div>
+          <div class="job-tags"><span class="jtag">Solidity</span><span class="jtag">DeFi</span><span class="jtag">Yield Farming</span><span class="jtag">EVM</span><span class="jtag">Security</span></div>
+          <div class="job-meta">
+            <div class="job-meta-left">
+              <span>💰 Fixed Price</span>
+              <span>📅 Posted 2 hrs ago</span>
+              <span>👥 14 proposals</span>
+              <span>⏱ 2 weeks</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;">
+              <div class="job-budget">$1,200 USDT</div>
+              <div class="job-actions">
+                <button class="save-job" onclick="event.stopPropagation();toast('Job saved!')">🤍</button>
+                <button class="apply-btn" onclick="toast('Opening proposal form...')">APPLY NOW</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-card">
+          <div class="job-top">
+            <div class="job-title-row">
+              <div class="job-title">NFT Marketplace Smart Contract — Polygon & Ethereum</div>
+              <div class="job-client"><div class="job-client-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">RP</div>Rahul P. • ⭐ 5.0 (12 hires) • Verified</div>
+            </div>
+            <span class="job-badge urgent">🔴 URGENT</span>
+          </div>
+          <div class="job-desc">Need a complete NFT marketplace contract with lazy minting, royalties (EIP-2981), auction system, and offer system. The contract should be gas-optimized and fully audited before deployment.</div>
+          <div class="job-tags"><span class="jtag">NFT</span><span class="jtag">Polygon</span><span class="jtag">EIP-2981</span><span class="jtag">Gas Optimization</span></div>
+          <div class="job-meta">
+            <div class="job-meta-left">
+              <span>💰 Fixed Price</span>
+              <span>📅 Posted 5 hrs ago</span>
+              <span>👥 21 proposals</span>
+              <span>⏱ 10 days</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;">
+              <div class="job-budget">$800 USDT</div>
+              <div class="job-actions">
+                <button class="save-job" onclick="event.stopPropagation();toast('Job saved!')">🤍</button>
+                <button class="apply-btn" onclick="toast('Opening proposal form...')">APPLY NOW</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-card">
+          <div class="job-top">
+            <div class="job-title-row">
+              <div class="job-title">Pi Network App Developer — Social Commerce Platform</div>
+              <div class="job-client"><div class="job-client-av" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">DK</div>David K. • ⭐ 4.7 (8 hires) • Verified</div>
+            </div>
+            <span class="job-badge open">🟢 OPEN</span>
+          </div>
+          <div class="job-desc">Building a social commerce platform inside Pi Browser. Need Pi SDK integration, Pi Payments, user authentication, and a product listing system. Experience with Pi Network ecosystem required.</div>
+          <div class="job-tags"><span class="jtag">Pi Network</span><span class="jtag">Pi SDK</span><span class="jtag">React</span><span class="jtag">Node.js</span><span class="jtag">Pioneer</span></div>
+          <div class="job-meta">
+            <div class="job-meta-left">
+              <span>💰 Fixed Price</span>
+              <span>📅 Posted 1 day ago</span>
+              <span>👥 7 proposals</span>
+              <span>⏱ 3 weeks</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;">
+              <div class="job-budget">2,000 Pi</div>
+              <div class="job-actions">
+                <button class="save-job" onclick="event.stopPropagation();toast('Job saved!')">🤍</button>
+                <button class="apply-btn" onclick="toast('Opening proposal form...')">APPLY NOW</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-card">
+          <div class="job-top">
+            <div class="job-title-row">
+              <div class="job-title">Crypto Trading Bot — Solana DEX Arbitrage Bot</div>
+              <div class="job-client"><div class="job-client-av" style="background:linear-gradient(135deg,#00c851,#007e33)">FH</div>Fatima H. • ⭐ 4.8 (19 hires)</div>
+            </div>
+            <span class="job-badge open">🟢 OPEN</span>
+          </div>
+          <div class="job-desc">Need an experienced developer to build an automated arbitrage trading bot for Solana DEXes (Jupiter, Raydium, Orca). Bot should detect price differences and execute trades automatically.</div>
+          <div class="job-tags"><span class="jtag">Solana</span><span class="jtag">Rust</span><span class="jtag">Trading Bot</span><span class="jtag">Jupiter</span><span class="jtag">Arbitrage</span></div>
+          <div class="job-meta">
+            <div class="job-meta-left">
+              <span>💰 Fixed Price</span>
+              <span>📅 Posted 2 days ago</span>
+              <span>👥 11 proposals</span>
+              <span>⏱ 1 month</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;">
+              <div class="job-budget">$2,500 USDT</div>
+              <div class="job-actions">
+                <button class="save-job" onclick="event.stopPropagation();toast('Job saved!')">🤍</button>
+                <button class="apply-btn" onclick="toast('Opening proposal form...')">APPLY NOW</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-card">
+          <div class="job-top">
+            <div class="job-title-row">
+              <div class="job-title">TON Blockchain Mini App — Telegram Game with Rewards</div>
+              <div class="job-client"><div class="job-client-av" style="background:linear-gradient(135deg,#0088cc,#00b4d8)">AK</div>Ahmed K. • ⭐ 4.6 (5 hires)</div>
+            </div>
+            <span class="job-badge featured">⭐ FEATURED</span>
+          </div>
+          <div class="job-desc">Looking for a TON developer to build a Telegram mini app game with play-to-earn mechanics, TON wallet integration, leaderboard, and daily rewards system. Similar to Hamster Kombat.</div>
+          <div class="job-tags"><span class="jtag">TON</span><span class="jtag">Telegram Mini App</span><span class="jtag">Play-to-Earn</span><span class="jtag">FunC</span></div>
+          <div class="job-meta">
+            <div class="job-meta-left">
+              <span>💰 Fixed Price</span>
+              <span>📅 Posted 3 days ago</span>
+              <span>👥 18 proposals</span>
+              <span>⏱ 6 weeks</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1rem;">
+              <div class="job-budget">$3,000 USDT</div>
+              <div class="job-actions">
+                <button class="save-job" onclick="event.stopPropagation();toast('Job saved!')">🤍</button>
+                <button class="apply-btn" onclick="toast('Opening proposal form...')">APPLY NOW</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /jobs-list -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LIVE CHAT ═══ -->
+<div class="page" id="chatPage">
+  <div class="chat-layout">
+
+    <!-- Conversations -->
+    <div class="chat-sidebar" id="chatSidebar">
+      <div class="chat-sidebar-top">
+        <div class="chat-search"><span>🔍</span><input type="text" placeholder="Search messages..."></div>
+      </div>
+      <div class="conv-list">
+        <div class="conv-item active" onclick="switchConv(this,'Luna M.','LM','linear-gradient(135deg,#ff6b35,#f7c59f)')">
+          <div class="conv-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM<div class="conv-online"></div></div>
+          <div class="conv-info">
+            <div class="conv-name">Luna M. <span class="conv-time">2m</span></div>
+            <div class="conv-msg">Can we schedule a call for tomorrow?</div>
+          </div>
+          <div class="conv-badge">3</div>
+        </div>
+        <div class="conv-item" onclick="switchConv(this,'Rahul P.','RP','linear-gradient(135deg,#00c851,#007e33)')">
+          <div class="conv-av" style="background:linear-gradient(135deg,#00c851,#007e33)">RP<div class="conv-online"></div></div>
+          <div class="conv-info">
+            <div class="conv-name">Rahul P. <span class="conv-time">1hr</span></div>
+            <div class="conv-msg">The NFT collection is 80% done</div>
+          </div>
+        </div>
+        <div class="conv-item" onclick="switchConv(this,'David L.','DL','linear-gradient(135deg,#00b4d8,#03045e)')">
+          <div class="conv-av" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DL</div>
+          <div class="conv-info">
+            <div class="conv-name">David L. <span class="conv-time">3hr</span></div>
+            <div class="conv-msg">Audit report sent to your email</div>
+          </div>
+          <div class="conv-badge">1</div>
+        </div>
+        <div class="conv-item" onclick="switchConv(this,'Fatima H.','FH','linear-gradient(135deg,#9c27b0,#4a148c)')">
+          <div class="conv-av" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">FH</div>
+          <div class="conv-info">
+            <div class="conv-name">Fatima H. <span class="conv-time">Yesterday</span></div>
+            <div class="conv-msg">Bot is ready for testing!</div>
+          </div>
+        </div>
+        <div class="conv-item" onclick="switchConv(this,'Alex K.','AK','linear-gradient(135deg,#8b30ff,#00f5ff)')">
+          <div class="conv-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK<div class="conv-online"></div></div>
+          <div class="conv-info">
+            <div class="conv-name">Alex K. <span class="conv-time">Yesterday</span></div>
+            <div class="conv-msg">Contract deployed on mainnet ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat window -->
+    <div class="chat-main">
+      <div class="chat-header">
+        <div class="chat-user">
+          <div class="chat-av" id="chatAv" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+          <div>
+            <div class="chat-user-name" id="chatName">Luna M.</div>
+            <div class="chat-user-status">🟢 Online — Smart Contract Project</div>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <div class="chat-icon-btn" onclick="toast('Starting video call...')">📹</div>
+          <div class="chat-icon-btn" onclick="toast('Starting voice call...')">📞</div>
+          <div class="chat-icon-btn" onclick="toast('Viewing order...')">📋</div>
+          <div class="chat-icon-btn">⋮</div>
+        </div>
+      </div>
+
+      <!-- Order Info -->
+      <div class="order-info-card" style="margin:0.75rem 1.5rem;">
+        <div class="oic-left">
+          <div class="oic-title">📋 Smart Contract Development — Standard Package</div>
+          <div class="oic-meta">Order #W3W-2840 • $400 USDT in Escrow • Due: Jun 1, 2026</div>
+        </div>
+        <div class="oic-right">
+          <button class="oic-btn green" onclick="toast('Funds released!')">✓ Release</button>
+          <button class="oic-btn red" onclick="toast('Dispute filed...')">⚠ Dispute</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-area" id="messagesArea">
+        <div class="date-sep">MAY 22, 2026</div>
+
+        <div class="msg recv">
+          <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+          <div>
+            <div class="msg-bubble">Hi! I just hired you for the Smart Contract project. Excited to work with you! 🚀</div>
+            <div class="msg-time">09:14 AM</div>
+          </div>
+        </div>
+
+        <div class="msg sent">
+          <div class="msg-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+          <div>
+            <div class="msg-bubble">Hello Luna! Thank you for the order. I've reviewed your requirements and I'm ready to get started. Could you share your contract specifications?</div>
+            <div class="msg-time">09:18 AM</div>
+          </div>
+        </div>
+
+        <div class="msg recv">
+          <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+          <div>
+            <div class="msg-bubble">Sure! Here's the document with all details.</div>
+            <div class="file-msg" onclick="toast('Downloading file...')">
+              <div class="file-icon">📄</div>
+              <div><div class="file-name">contract-specs-v2.pdf</div><div class="file-size">2.4 MB • PDF</div></div>
+            </div>
+            <div class="msg-time">09:22 AM</div>
+          </div>
+        </div>
+
+        <div class="msg sent">
+          <div class="msg-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+          <div>
+            <div class="msg-bubble">Got it! I'll review this and share an initial code structure by EOD. I'll be using OpenZeppelin for security standards and Hardhat for testing. 💪</div>
+            <div class="msg-time">10:05 AM</div>
+          </div>
+        </div>
+
+        <div class="date-sep">TODAY — MAY 23, 2026</div>
+
+        <div class="msg recv">
+          <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+          <div>
+            <div class="msg-bubble">Great progress! Can we schedule a quick call tomorrow to review the contract architecture?</div>
+            <div class="msg-time">08:45 AM</div>
+          </div>
+        </div>
+
+        <div class="msg sent">
+          <div class="msg-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+          <div>
+            <div class="msg-bubble">Absolutely! How about 10 AM UTC? I'll also have the first version of the staking contract ready to show you. 🔥</div>
+            <div class="msg-time">09:02 AM</div>
+          </div>
+        </div>
+
+        <div class="msg recv">
+          <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+          <div>
+            <div class="msg-bubble">10 AM UTC works perfectly! See you then 😊</div>
+            <div class="msg-time">09:15 AM</div>
+          </div>
+        </div>
+
+        <!-- Typing -->
+        <div class="typing">
+          <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;">LM</div>
+          <div class="msg-bubble" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:4px 14px 14px 14px;padding:0.75rem 1rem;">
+            <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="chat-toolbar">
+          <div class="tool-btn" onclick="toast('Opening file picker...')">📎</div>
+          <div class="tool-btn" onclick="toast('Opening image picker...')">🖼️</div>
+          <div class="tool-btn" onclick="toast('Opening voice recorder...')">🎤</div>
+          <div class="tool-btn" onclick="toast('Sending payment request...')">💸</div>
+          <div style="position:relative;">
+            <div class="tool-btn" id="emojiBtn" onclick="toggleEmoji()">😊</div>
+            <div class="emoji-picker" id="emojiPicker">
+              <span class="ep-emoji" onclick="addEmoji('😊')">😊</span>
+              <span class="ep-emoji" onclick="addEmoji('🚀')">🚀</span>
+              <span class="ep-emoji" onclick="addEmoji('🔥')">🔥</span>
+              <span class="ep-emoji" onclick="addEmoji('💪')">💪</span>
+              <span class="ep-emoji" onclick="addEmoji('✅')">✅</span>
+              <span class="ep-emoji" onclick="addEmoji('💰')">💰</span>
+              <span class="ep-emoji" onclick="addEmoji('🎯')">🎯</span>
+              <span class="ep-emoji" onclick="addEmoji('⚡')">⚡</span>
+              <span class="ep-emoji" onclick="addEmoji('👍')">👍</span>
+              <span class="ep-emoji" onclick="addEmoji('❤️')">❤️</span>
+              <span class="ep-emoji" onclick="addEmoji('🙏')">🙏</span>
+              <span class="ep-emoji" onclick="addEmoji('💡')">💡</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-textarea" id="msgInput" placeholder="Type your message..." rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+          <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ PAYMENT / WALLET ═══ -->
+<div class="page" id="payPage">
+  <div class="pay-layout">
+
+    <!-- Wallet Big Card -->
+    <div class="wallet-big" style="margin-bottom:1.5rem;">
+      <div class="wb-label">// TOTAL PORTFOLIO VALUE</div>
+      <div class="wb-balance">$4,284.00</div>
+      <div class="wb-usd">≈ 4,284 USDT equivalent across all chains</div>
+      <div class="wb-addr" onclick="toast('Address copied!')">
+        <span>π</span> pi_ak7x9...f4m2 &nbsp;📋
+      </div>
+      <div class="wb-actions">
+        <button class="wb-btn deposit" onclick="toast('Opening deposit...')">⬇ DEPOSIT</button>
+        <button class="wb-btn withdraw" onclick="toast('Opening withdraw...')">⬆ WITHDRAW</button>
+        <button class="wb-btn send" onclick="toast('Opening send form...')">↗ SEND</button>
+      </div>
+    </div>
+
+    <div class="pay-grid">
+
+      <!-- Chain Balances -->
+      <div class="pcard">
+        <div class="pcard-title">Crypto Balances <span class="pcard-action">+ Add Wallet</span></div>
+        <div class="chain-row">
+          <div class="chain-left">
+            <div class="chain-ico" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">π</div>
+            <div><div class="chain-nm">Pi Network <span style="font-size:0.58rem;background:rgba(139,48,255,0.2);border:1px solid var(--purple);border-radius:4px;padding:0.05rem 0.35rem;color:var(--purple2);font-family:var(--fm);">REC</span></div><div class="chain-sym">PI MAINNET</div></div>
+          </div>
+          <div class="chain-right"><div class="chain-val">2,840 Pi</div><div class="chain-usd">≈ $284.00 <span class="chain-chg up">+5.2%</span></div></div>
+        </div>
+        <div class="chain-row">
+          <div class="chain-left"><div class="chain-ico" style="background:linear-gradient(135deg,#26a69a,#00796b)">₮</div><div><div class="chain-nm">USDT</div><div class="chain-sym">TRC-20</div></div></div>
+          <div class="chain-right"><div class="chain-val">1,250 USDT</div><div class="chain-usd">≈ $1,250.00 <span class="chain-chg up">+0.0%</span></div></div>
+        </div>
+        <div class="chain-row">
+          <div class="chain-left"><div class="chain-ico" style="background:linear-gradient(135deg,#9945ff,#14f195)">◎</div><div><div class="chain-nm">Solana</div><div class="chain-sym">SOL</div></div></div>
+          <div class="chain-right"><div class="chain-val">4.2 SOL</div><div class="chain-usd">≈ $630.00 <span class="chain-chg dn">-2.1%</span></div></div>
+        </div>
+        <div class="chain-row">
+          <div class="chain-left"><div class="chain-ico" style="background:linear-gradient(135deg,#f0b90b,#ff6b35)">⬡</div><div><div class="chain-nm">BNB</div><div class="chain-sym">BSC</div></div></div>
+          <div class="chain-right"><div class="chain-val">0.85 BNB</div><div class="chain-usd">≈ $510.00 <span class="chain-chg up">+3.4%</span></div></div>
+        </div>
+        <div class="chain-row">
+          <div class="chain-left"><div class="chain-ico" style="background:linear-gradient(135deg,#0088cc,#00b4d8)">💎</div><div><div class="chain-nm">TON</div><div class="chain-sym">TON CHAIN</div></div></div>
+          <div class="chain-right"><div class="chain-val">120 TON</div><div class="chain-usd">≈ $720.00 <span class="chain-chg up">+7.1%</span></div></div>
+        </div>
+        <div class="chain-row">
+          <div class="chain-left"><div class="chain-ico" style="background:linear-gradient(135deg,#627eea,#a855f7)">Ξ</div><div><div class="chain-nm">Ethereum</div><div class="chain-sym">ERC-20</div></div></div>
+          <div class="chain-right"><div class="chain-val">0.12 ETH</div><div class="chain-usd">≈ $420.00 <span class="chain-chg dn">-1.3%</span></div></div>
+        </div>
+      </div>
+
+      <!-- Receive QR + Send -->
+      <div>
+        <div class="pcard" style="margin-bottom:1.5rem;">
+          <div class="pcard-title">Receive Payment</div>
+          <div style="text-align:center;">
+            <div class="qr-box" style="margin-bottom:1rem;">
+              <div style="font-size:0.6rem;font-family:var(--fm);color:#555;padding:0.5rem;">QR CODE<br>pi_ak7x9f4m2</div>
+            </div>
+            <div style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);margin-bottom:0.75rem;word-break:break-all;padding:0.5rem;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">pi_ak7x9mf2kd9f4m2xp3</div>
+            <button class="copy-btn" onclick="toast('Address copied to clipboard!')">📋 Copy Address</button>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="pcard-title">Send Crypto</div>
+          <div class="send-form">
+            <div class="form-group" style="margin:0;">
+              <div class="form-label">To Address</div>
+              <input type="text" class="form-input" placeholder="Wallet address or username">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <div class="form-label">Amount & Chain</div>
+              <div style="display:flex;gap:0.5rem;">
+                <input type="text" class="form-input" placeholder="0.00" style="flex:1;">
+                <select class="form-select" style="width:120px;">
+                  <option>Pi Network</option>
+                  <option>USDT</option>
+                  <option>SOL</option>
+                  <option>BNB</option>
+                  <option>TON</option>
+                </select>
+              </div>
+            </div>
+            <button class="submit-btn" onclick="toast('Transaction submitted!')">↗ SEND NOW</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Escrow -->
+    <div class="pcard" style="margin-bottom:1.5rem;">
+      <div class="pcard-title">Active Escrow <span class="pcard-action">View All</span></div>
+      <div class="escrow-item">
+        <div class="escrow-header">
+          <div><div class="escrow-title">Smart Contract Development — Alex K.</div><div class="escrow-meta">Order #W3W-2840 • Due Jun 1, 2026 • 60% complete</div></div>
+          <div class="escrow-amount">$400 USDT</div>
+        </div>
+        <div class="prog-track"><div class="prog-fill cyan" style="width:60%"></div></div>
+        <div class="escrow-actions">
+          <button class="esc-btn release" onclick="toast('Funds released to Alex K.!')">✓ Release Funds</button>
+          <button class="esc-btn dispute" onclick="toast('Dispute filed...')">⚠ Open Dispute</button>
+        </div>
+      </div>
+      <div class="escrow-item">
+        <div class="escrow-header">
+          <div><div class="escrow-title">NFT Collection Design — Maria N.</div><div class="escrow-meta">Order #W3W-2836 • Due May 28, 2026 • 85% complete</div></div>
+          <div class="escrow-amount">1,200 Pi</div>
+        </div>
+        <div class="prog-track"><div class="prog-fill orange" style="width:85%"></div></div>
+        <div class="escrow-actions">
+          <button class="esc-btn release" onclick="toast('Funds released to Maria N.!')">✓ Release Funds</button>
+          <button class="esc-btn dispute" onclick="toast('Dispute filed...')">⚠ Open Dispute</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="pcard">
+      <div class="pcard-title">Transaction History <span class="pcard-action">Export CSV</span></div>
+      <div style="overflow-x:auto;">
+        <table class="tx-table">
+          <thead>
+            <tr><th>Type</th><th>From/To</th><th>Amount</th><th>Chain</th><th>Date</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="tx-type"><div class="tx-icon in">⬇</div><div><div class="tx-name">Payment Received</div><div class="tx-hash">0x4a2f...9c3d</div></div></div></td>
+              <td style="font-size:0.78rem;color:var(--grey);">Luna M.</td>
+              <td class="tx-amt in">+$400 USDT</td>
+              <td style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);">TRC-20</td>
+              <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 23</td>
+              <td><span class="tx-status confirmed">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td><div class="tx-type"><div class="tx-icon escrow">🔒</div><div><div class="tx-name">Escrow Locked</div><div class="tx-hash">0x7b1e...2a8f</div></div></div></td>
+              <td style="font-size:0.78rem;color:var(--grey);">Maria N. order</td>
+              <td class="tx-amt" style="color:var(--orange);">1,200 Pi</td>
+              <td style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);">Pi Net</td>
+              <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 22</td>
+              <td><span class="tx-status pending">IN ESCROW</span></td>
+            </tr>
+            <tr>
+              <td><div class="tx-type"><div class="tx-icon in">⬇</div><div><div class="tx-name">Gig Payment</div><div class="tx-hash">0x2c9a...5e7b</div></div></div></td>
+              <td style="font-size:0.78rem;color:var(--grey);">Rahul P.</td>
+              <td class="tx-amt in">+$150 USDT</td>
+              <td style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);">ERC-20</td>
+              <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 20</td>
+              <td><span class="tx-status confirmed">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td><div class="tx-type"><div class="tx-icon out">⬆</div><div><div class="tx-name">Withdrawal</div><div class="tx-hash">0x8d3f...1c4e</div></div></div></td>
+              <td style="font-size:0.78rem;color:var(--grey);">Personal Wallet</td>
+              <td class="tx-amt out">-$500 USDT</td>
+              <td style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);">TRC-20</td>
+              <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 18</td>
+              <td><span class="tx-status confirmed">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td><div class="tx-type"><div class="tx-icon in">⬇</div><div><div class="tx-name">Job Completion</div><div class="tx-hash">0x5f2b...8d1a</div></div></div></td>
+              <td style="font-size:0.78rem;color:var(--grey);">Fatima H.</td>
+              <td class="tx-amt in">+$180 USDT</td>
+              <td style="font-family:var(--fm);font-size:0.68rem;color:var(--grey);">TRC-20</td>
+              <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 15</td>
+              <td><span class="tx-status confirmed">CONFIRMED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- POST JOB MODAL -->
+<div class="modal-overlay" id="jobModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeJobModal()">×</div>
+    <div class="modal-title">📋 Post a New Job</div>
+    <div class="modal-sub">Fill in the details below. Your job will be visible to 50,000+ freelancers.</div>
+    <div class="form-group">
+      <label class="form-label">Job Title</label>
+      <input type="text" class="form-input" placeholder="e.g. Senior Solidity Developer for DeFi Protocol">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" placeholder="Describe the project, requirements, and deliverables..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Budget</label>
+        <input type="text" class="form-input" placeholder="e.g. 500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Budget Type</label>
+        <select class="form-select"><option>Fixed Price</option><option>Hourly</option><option>Monthly</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select">
+          <option>Smart Contract Dev</option>
+          <option>NFT Design</option>
+          <option>Web3 Frontend</option>
+          <option>Blockchain Audit</option>
+          <option>Crypto Marketing</option>
+          <option>Telegram Bot</option>
+          <option>AI Automation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deadline</label>
+        <input type="date" class="form-input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Payment Chain</label>
+      <div class="chain-select">
+        <span class="chain-opt sel" onclick="this.classList.toggle('sel')">π Pi Network</span>
+        <span class="chain-opt" onclick="this.classList.toggle('sel')">₮ USDT</span>
+        <span class="chain-opt" onclick="this.classList.toggle('sel')">◎ Solana</span>
+        <span class="chain-opt" onclick="this.classList.toggle('sel')">⬡ BSC</span>
+        <span class="chain-opt" onclick="this.classList.toggle('sel')">💎 TON</span>
+        <span class="chain-opt" onclick="this.classList.toggle('sel')">Ξ ETH</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Required Skills (comma separated)</label>
+      <input type="text" class="form-input" placeholder="Solidity, DeFi, EVM, Security">
+    </div>
+    <button class="submit-btn" onclick="submitJob()">🚀 POST JOB — VISIBLE INSTANTLY</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// PAGE NAVIGATION
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const pg = document.getElementById(id);
+  if(pg) pg.classList.add('active');
+  const tab = document.getElementById('tab-'+id);
+  if(tab) tab.classList.add('active');
+  // chat page special
+  if(id === 'chatPage') {
+    pg.style.display = 'flex';
+    pg.style.height = 'calc(100vh - 64px)';
+  }
+}
+
+// JOB MODAL
+function openJobModal() {
+  document.getElementById('jobModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeJobModal() {
+  document.getElementById('jobModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function submitJob() {
+  closeJobModal();
+  toast('✅ Job posted! Freelancers are being notified...');
+}
+document.getElementById('jobModal').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeJobModal();
+});
+
+// CHAT
+function switchConv(el, name, initials, bg) {
+  document.querySelectorAll('.conv-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('chatName').textContent = name;
+  document.getElementById('chatAv').textContent = initials;
+  document.getElementById('chatAv').style.background = bg;
+  el.querySelector('.conv-badge') && el.querySelector('.conv-badge').remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const area = document.getElementById('messagesArea');
+  const msg = document.createElement('div');
+  msg.className = 'msg sent';
+  msg.innerHTML = `
+    <div class="msg-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>
+    <div>
+      <div class="msg-bubble">${text}</div>
+      <div class="msg-time">Just now ✓✓</div>
+    </div>`;
+  // Remove typing indicator first
+  const typing = area.querySelector('.typing');
+  if(typing) area.removeChild(typing);
+  area.appendChild(msg);
+  input.value = '';
+  input.style.height = 'auto';
+  area.scrollTop = area.scrollHeight;
+  // Simulate reply
+  setTimeout(() => {
+    const typing2 = document.createElement('div');
+    typing2.className = 'typing';
+    typing2.innerHTML = `
+      <div class="msg-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;">LM</div>
+      <div class="msg-bubble" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:4px 14px 14px 14px;padding:0.75rem 1rem;">
+        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+      </div>`;
+    area.appendChild(typing2);
+    area.scrollTop = area.scrollHeight;
+  }, 800);
+}
+
+function toggleEmoji() {
+  document.getElementById('emojiPicker').classList.toggle('open');
+}
+function addEmoji(e) {
+  document.getElementById('msgInput').value += e;
+  document.getElementById('emojiPicker').classList.remove('open');
+  document.getElementById('msgInput').focus();
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#emojiBtn') && !e.target.closest('#emojiPicker')) {
+    document.getElementById('emojiPicker').classList.remove('open');
+  }
+});
+
+// Auto-resize textarea
+document.getElementById('msgInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+// TOAST
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => el.style.transform = 'translateX(-50%) translateY(100px)', 2800);
+}
+
+// ESC
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { closeJobModal(); }
+});
+</script>
+</body>
+</html>
