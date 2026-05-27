@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Weapon — Freelancer Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#02040a;--deep:#050d1f;--dark:#0a1628;
+  --purple:#8b30ff;--purple2:#a855f7;--cyan:#00f5ff;--cyan2:#00c8d4;
+  --white:#f0f4ff;--grey:#8899bb;--grey2:#4a5568;
+  --border:rgba(0,245,255,0.1);--bpurple:rgba(139,48,255,0.2);
+  --card:rgba(10,22,40,0.9);--cglow:rgba(0,245,255,0.08);--pglow:rgba(139,48,255,0.12);
+  --green:#00e676;--yellow:#ffd700;--red:#ff4444;--orange:#ff9800;
+  --fd:'Orbitron',sans-serif;--fb:'Exo 2',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.02) 1px,transparent 1px);
+  background-size:50px 50px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:500;height:64px;background:rgba(2,4,10,0.95);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;}
+.logo{font-family:var(--fd);font-size:1.1rem;font-weight:900;letter-spacing:0.08em;cursor:pointer;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--grey);text-decoration:none;font-size:0.72rem;font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--cyan);}
+.nav-right{display:flex;gap:0.75rem;align-items:center;}
+.btn{font-family:var(--fd);font-size:0.62rem;letter-spacing:0.12em;padding:0.55rem 1.2rem;border-radius:6px;cursor:pointer;border:none;transition:all 0.25s;}
+.btn-o{background:transparent;border:1px solid rgba(0,245,255,0.35);color:var(--cyan);}
+.btn-o:hover{background:var(--cglow);}
+.btn-p{background:linear-gradient(135deg,var(--purple),#5b21b6);color:#fff;box-shadow:0 0 18px rgba(139,48,255,0.35);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(139,48,255,0.55);}
+.btn-c{background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:var(--black);font-weight:700;}
+.btn-c:hover{box-shadow:0 0 25px rgba(0,245,255,0.4);}
+
+/* COVER */
+.cover{
+  height:280px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0d0826 0%,#0a1628 40%,#1a0533 70%,#050d1f 100%);
+}
+.cover::before{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,245,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.04) 1px,transparent 1px);
+  background-size:40px 40px;}
+.cover-orb1{position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,48,255,0.2),transparent 70%);
+  top:-200px;left:-100px;filter:blur(60px);}
+.cover-orb2{position:absolute;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,245,255,0.12),transparent 70%);
+  bottom:-150px;right:-50px;filter:blur(50px);}
+.cover-actions{position:absolute;top:1.5rem;right:2rem;display:flex;gap:0.75rem;}
+.cover-btn{padding:0.5rem 1rem;background:rgba(2,4,10,0.7);border:1px solid var(--border);
+  border-radius:8px;color:var(--grey);font-family:var(--fd);font-size:0.6rem;letter-spacing:0.1em;
+  cursor:pointer;backdrop-filter:blur(10px);transition:all 0.2s;}
+.cover-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.verified-banner{position:absolute;top:1.5rem;left:2rem;
+  display:flex;align-items:center;gap:0.5rem;
+  background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);
+  border-radius:100px;padding:0.4rem 1rem;font-size:0.65rem;font-family:var(--fm);color:var(--green);letter-spacing:0.1em;}
+.vdot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* PROFILE LAYOUT */
+.profile-wrap{max-width:1200px;margin:0 auto;padding:0 2rem;position:relative;z-index:1;}
+
+/* PROFILE HEADER */
+.profile-header{display:flex;align-items:flex-end;gap:2rem;margin-top:-80px;margin-bottom:2rem;flex-wrap:wrap;}
+.avatar-wrap{position:relative;flex-shrink:0;}
+.big-avatar{
+  width:140px;height:140px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:2.8rem;font-weight:900;
+  border:4px solid var(--deep);
+  box-shadow:0 0 40px rgba(139,48,255,0.4);
+  position:relative;z-index:2;
+}
+.online-badge{position:absolute;bottom:8px;right:8px;width:20px;height:20px;
+  background:var(--green);border:3px solid var(--deep);border-radius:50%;z-index:3;}
+.level-badge{position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  color:var(--black);font-family:var(--fd);font-size:0.55rem;font-weight:700;
+  letter-spacing:0.1em;padding:0.2rem 0.6rem;border-radius:100px;white-space:nowrap;}
+
+.profile-info{flex:1;padding-bottom:0.5rem;min-width:0;}
+.profile-name{font-family:var(--fd);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;margin-bottom:0.3rem;letter-spacing:0.04em;}
+.profile-title{font-size:1rem;color:var(--grey);margin-bottom:0.75rem;}
+.profile-meta{display:flex;gap:1.25rem;flex-wrap:wrap;font-size:0.75rem;color:var(--grey);font-family:var(--fm);}
+.meta-item{display:flex;align-items:center;gap:0.35rem;}
+.meta-item strong{color:var(--white);}
+
+.profile-actions{display:flex;gap:0.75rem;align-items:center;padding-bottom:0.5rem;flex-wrap:wrap;}
+.hire-btn{padding:0.75rem 2rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;color:white;font-family:var(--fd);font-size:0.72rem;
+  letter-spacing:0.12em;cursor:pointer;transition:all 0.25s;
+  box-shadow:0 0 25px rgba(139,48,255,0.4);}
+.hire-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(139,48,255,0.6);}
+.msg-btn{padding:0.75rem 1.5rem;background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.3);
+  border-radius:10px;color:var(--cyan);font-family:var(--fd);font-size:0.72rem;letter-spacing:0.12em;cursor:pointer;transition:all 0.2s;}
+.msg-btn:hover{background:rgba(0,245,255,0.15);}
+.save-btn-profile{padding:0.75rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:10px;color:var(--grey);cursor:pointer;font-size:1.1rem;transition:all 0.2s;}
+.save-btn-profile:hover{border-color:var(--red);color:var(--red);}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:0;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:0;margin-bottom:2rem;overflow:hidden;flex-wrap:wrap;}
+.stat-box{flex:1;min-width:120px;padding:1.25rem 1.5rem;text-align:center;
+  border-right:1px solid var(--border);transition:background 0.2s;cursor:default;}
+.stat-box:last-child{border-right:none;}
+.stat-box:hover{background:rgba(0,245,255,0.03);}
+.sb-val{font-family:var(--fd);font-size:1.4rem;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-lbl{font-size:0.62rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.25rem;}
+
+/* LAYOUT */
+.profile-layout{display:grid;grid-template-columns:1fr 320px;gap:2rem;margin-bottom:4rem;}
+.profile-main{min-width:0;}
+.profile-sidebar{display:flex;flex-direction:column;gap:1.5rem;}
+
+/* CARD */
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;animation:fadeUp 0.5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+.pcard-title{font-family:var(--fd);font-size:0.82rem;font-weight:700;letter-spacing:0.06em;
+  margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;}
+.pcard-title span{font-size:1rem;}
+
+/* TABS */
+.tab-row{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;}
+.tab-item{padding:0.7rem 1.25rem;font-size:0.72rem;font-family:var(--fd);letter-spacing:0.08em;
+  cursor:pointer;color:var(--grey);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+.tab-item.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.tab-item:hover{color:var(--white);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ABOUT */
+.about-text{font-size:0.88rem;color:var(--grey);line-height:1.85;}
+.about-text p{margin-bottom:1rem;}
+
+/* SKILLS */
+.skills-cloud{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:0.75rem;}
+.skill-tag{padding:0.4rem 1rem;border-radius:100px;font-size:0.72rem;font-family:var(--fm);letter-spacing:0.06em;transition:all 0.2s;cursor:default;}
+.skill-tag.expert{background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.25);color:var(--cyan);}
+.skill-tag.advanced{background:rgba(139,48,255,0.08);border:1px solid rgba(139,48,255,0.25);color:var(--purple2);}
+.skill-tag.intermediate{background:rgba(255,152,0,0.08);border:1px solid rgba(255,152,0,0.2);color:var(--orange);}
+.skill-tag:hover{transform:translateY(-2px);}
+
+/* PORTFOLIO */
+.portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+.port-item{border-radius:10px;overflow:hidden;position:relative;cursor:pointer;
+  aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;border:1px solid var(--border);transition:all 0.3s;}
+.port-item:hover{transform:scale(1.02);border-color:rgba(139,48,255,0.4);}
+.port-item::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(2,4,10,0.85) 100%);}
+.port-label{position:absolute;bottom:0.6rem;left:0.75rem;right:0.75rem;z-index:1;
+  font-family:var(--fd);font-size:0.65rem;color:var(--white);letter-spacing:0.05em;}
+.port-tech{font-size:0.58rem;color:var(--cyan);font-family:var(--fm);}
+
+/* GIG CARDS in profile */
+.gig-row{display:flex;flex-direction:column;gap:1rem;}
+.pgig{display:flex;gap:1rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);
+  border-radius:10px;padding:1rem;cursor:pointer;transition:all 0.25s;}
+.pgig:hover{border-color:rgba(139,48,255,0.3);background:var(--pglow);}
+.pgig-thumb{width:72px;height:72px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+.pgig-info{flex:1;min-width:0;}
+.pgig-title{font-size:0.83rem;font-weight:600;margin-bottom:0.35rem;line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.pgig-meta{display:flex;gap:0.75rem;font-size:0.68rem;color:var(--grey);font-family:var(--fm);flex-wrap:wrap;}
+.pgig-stars{color:var(--yellow);}
+.pgig-price{font-family:var(--fd);font-size:0.9rem;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  flex-shrink:0;align-self:center;}
+
+/* REVIEWS */
+.reviews-summary{display:flex;gap:2rem;align-items:center;margin-bottom:1.5rem;padding:1.25rem;
+  background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.15);border-radius:10px;flex-wrap:wrap;}
+.big-rating{font-family:var(--fd);font-size:3rem;font-weight:900;color:var(--yellow);line-height:1;}
+.rating-breakdown{flex:1;min-width:200px;}
+.rb-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.4rem;}
+.rb-stars{font-size:0.7rem;color:var(--yellow);width:60px;flex-shrink:0;}
+.rb-bar{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;}
+.rb-fill{height:100%;background:var(--yellow);border-radius:100px;}
+.rb-count{font-size:0.65rem;font-family:var(--fm);color:var(--grey);width:30px;text-align:right;flex-shrink:0;}
+.rating-cats{display:flex;flex-direction:column;gap:0.4rem;min-width:160px;}
+.rc-row{display:flex;justify-content:space-between;font-size:0.72rem;}
+.rc-lbl{color:var(--grey);}
+.rc-val{font-family:var(--fm);color:var(--yellow);}
+
+.review-item{padding:1.25rem 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.review-item:last-child{border-bottom:none;}
+.rev-hdr{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;}
+.rev-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+.rev-name{font-size:0.82rem;font-weight:600;}
+.rev-info{font-size:0.65rem;color:var(--grey);font-family:var(--fm);margin-top:0.15rem;}
+.rev-stars{color:var(--yellow);font-size:0.82rem;margin-bottom:0.5rem;letter-spacing:1px;}
+.rev-text{font-size:0.83rem;color:var(--grey);line-height:1.7;}
+.rev-helpful{font-size:0.65rem;color:var(--grey2);font-family:var(--fm);margin-top:0.5rem;cursor:pointer;}
+.rev-helpful:hover{color:var(--cyan);}
+
+/* SIDEBAR CARDS */
+.scard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;animation:fadeUp 0.5s ease both;}
+.sc-title{font-family:var(--fd);font-size:0.78rem;font-weight:700;letter-spacing:0.06em;margin-bottom:1.1rem;}
+
+/* ORDER PACKAGE CARD */
+.pkg-selector{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;}
+.pkg-opt{border:1px solid var(--border);border-radius:8px;padding:0.85rem 1rem;cursor:pointer;transition:all 0.2s;}
+.pkg-opt:hover,.pkg-opt.active{border-color:rgba(139,48,255,0.5);background:var(--pglow);}
+.pkg-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;}
+.pkg-name{font-family:var(--fd);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;}
+.pkg-name.basic{color:var(--grey);}
+.pkg-name.std{color:var(--cyan2);}
+.pkg-name.prem{color:var(--yellow);}
+.pkg-price{font-family:var(--fd);font-size:0.95rem;font-weight:700;color:var(--cyan);}
+.pkg-desc{font-size:0.72rem;color:var(--grey);line-height:1.4;}
+.pkg-feats{margin-top:0.5rem;display:flex;flex-direction:column;gap:0.2rem;}
+.pkg-feat{font-size:0.68rem;color:var(--grey);display:flex;align-items:center;gap:0.35rem;}
+.pkg-feat::before{content:'✓';color:var(--green);font-size:0.65rem;}
+.pkg-meta-row{display:flex;gap:0.75rem;margin-top:0.5rem;font-size:0.62rem;font-family:var(--fm);color:var(--grey2);}
+
+.order-btn{width:100%;padding:0.85rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;color:white;font-family:var(--fd);font-size:0.7rem;
+  letter-spacing:0.12em;cursor:pointer;margin-top:0.75rem;transition:all 0.25s;
+  box-shadow:0 0 25px rgba(139,48,255,0.3);}
+.order-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(139,48,255,0.55);}
+.escrow-note{text-align:center;font-size:0.62rem;color:var(--grey);font-family:var(--fm);margin-top:0.5rem;}
+
+/* INFO LIST */
+.info-list{display:flex;flex-direction:column;gap:0.75rem;}
+.info-row{display:flex;gap:0.65rem;font-size:0.8rem;}
+.info-ico{width:28px;height:28px;border-radius:6px;background:rgba(0,245,255,0.06);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+.info-content{}
+.info-label{font-size:0.62rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.1em;text-transform:uppercase;}
+.info-value{font-size:0.8rem;color:var(--white);margin-top:0.1rem;}
+
+/* LANG / CERT */
+.cert-item{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0;border-bottom:1px solid rgba(0,245,255,0.04);}
+.cert-item:last-child{border-bottom:none;}
+.cert-ico{width:32px;height:32px;border-radius:8px;background:rgba(139,48,255,0.1);
+  border:1px solid var(--bpurple);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;}
+.cert-name{font-size:0.78rem;font-weight:600;}
+.cert-issuer{font-size:0.65rem;color:var(--grey);font-family:var(--fm);}
+.cert-badge{margin-left:auto;padding:0.15rem 0.5rem;background:rgba(0,230,118,0.1);
+  border:1px solid rgba(0,230,118,0.3);border-radius:4px;font-size:0.58rem;font-family:var(--fm);color:var(--green);}
+
+/* SIMILAR */
+.similar-grid{display:grid;grid-template-columns:1fr;gap:0.75rem;}
+.sim-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem;
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s;}
+.sim-item:hover{border-color:rgba(139,48,255,0.3);}
+.sim-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+.sim-name{font-size:0.78rem;font-weight:600;}
+.sim-title{font-size:0.65rem;color:var(--grey);font-family:var(--fm);}
+.sim-rate{font-family:var(--fd);font-size:0.72rem;color:var(--cyan);margin-left:auto;flex-shrink:0;}
+
+/* SHARE */
+.share-row{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.share-btn{flex:1;min-width:70px;padding:0.5rem;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:8px;color:var(--grey);font-size:0.8rem;
+  cursor:pointer;transition:all 0.2s;text-align:center;}
+.share-btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cglow);}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(2,4,10,0.92);backdrop-filter:blur(12px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;padding:1rem;}
+.modal-ov.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark);border:1px solid var(--bpurple);border-radius:16px;
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:2rem;
+  position:relative;transform:scale(0.96);transition:transform 0.3s;}
+.modal-ov.open .modal{transform:scale(1);}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;width:34px;height:34px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--grey);transition:all 0.2s;}
+.modal-close:hover{color:var(--white);}
+.modal-ttl{font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:0.4rem;}
+.modal-sub{font-size:0.8rem;color:var(--grey);margin-bottom:1.5rem;}
+.fi{margin-bottom:1rem;}
+.fl{font-size:0.6rem;font-family:var(--fm);letter-spacing:0.12em;color:var(--grey);margin-bottom:0.4rem;display:block;text-transform:uppercase;}
+.finput,.ftarea,.fselect{width:100%;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--fb);
+  font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+.finput:focus,.ftarea:focus,.fselect:focus{border-color:rgba(0,245,255,0.4);}
+.finput::placeholder,.ftarea::placeholder{color:var(--grey);}
+.ftarea{resize:vertical;min-height:100px;}
+.fselect option{background:var(--dark);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.sub-btn{width:100%;padding:0.9rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));
+  border:none;border-radius:10px;color:white;font-family:var(--fd);font-size:0.72rem;
+  letter-spacing:0.12em;cursor:pointer;transition:all 0.25s;box-shadow:0 0 25px rgba(139,48,255,0.3);margin-top:0.5rem;}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(139,48,255,0.55);}
+
+/* REPORT */
+.report-link{font-size:0.65rem;color:var(--grey2);cursor:pointer;font-family:var(--fm);text-align:center;margin-top:0.5rem;transition:color 0.2s;}
+.report-link:hover{color:var(--red);}
+
+/* MOBILE */
+@media(max-width:900px){
+  .profile-layout{grid-template-columns:1fr;}
+  .profile-sidebar{order:-1;}
+  .nav-links{display:none;}
+  .portfolio-grid{grid-template-columns:1fr 1fr;}
+  .stats-bar{border-radius:10px;}
+  .profile-header{margin-top:-60px;}
+  .big-avatar{width:100px;height:100px;font-size:2rem;}
+}
+@media(max-width:600px){
+  .profile-wrap{padding:0 1rem;}
+  .cover{height:200px;}
+  .frow{grid-template-columns:1fr;}
+  .reviews-summary{flex-direction:column;}
+  .portfolio-grid{grid-template-columns:1fr;}
+  .profile-header{gap:1rem;}
+  .profile-actions{width:100%;}
+  .hire-btn,.msg-btn{flex:1;}
+}
+
+/* PROGRESS SKILL */
+.skill-progress{margin-bottom:0.85rem;}
+.sp-hdr{display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.75rem;}
+.sp-lbl{color:var(--grey);}
+.sp-pct{font-family:var(--fm);color:var(--cyan);}
+.sp-track{height:4px;background:rgba(255,255,255,0.05);border-radius:100px;overflow:hidden;}
+.sp-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--cyan),var(--purple));}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--purple),var(--cyan2));color:white;
+  padding:0.7rem 1.5rem;border-radius:100px;font-family:var(--fd);font-size:0.68rem;
+  letter-spacing:0.08em;z-index:9999;transition:transform 0.4s;white-space:nowrap;
+  box-shadow:0 10px 40px rgba(139,48,255,0.5);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">WEB3⚡WEAPON</div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Browse Gigs</a></li>
+    <li><a href="#">Job Board</a></li>
+    <li><a href="#">Dashboard</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn btn-o" onclick="toast('Opening messages...')">💬 Message</button>
+    <button class="btn btn-p" onclick="openHireModal()">🚀 Hire Now</button>
+  </div>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-orb1"></div>
+  <div class="cover-orb2"></div>
+  <div class="verified-banner"><div class="vdot"></div>✓ VERIFIED FREELANCER</div>
+  <div class="cover-actions">
+    <button class="cover-btn" onclick="toast('Profile shared!')">🔗 Share</button>
+    <button class="cover-btn" onclick="toast('Profile saved!')">🤍 Save</button>
+  </div>
+</div>
+
+<!-- PROFILE WRAP -->
+<div class="profile-wrap">
+
+  <!-- HEADER -->
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      <div class="big-avatar">AK</div>
+      <div class="online-badge"></div>
+      <div class="level-badge">⭐ ELITE PRO</div>
+    </div>
+
+    <div class="profile-info">
+      <div class="profile-name">Ahmed Kabiru</div>
+      <div class="profile-title">Senior Smart Contract Developer & Blockchain Security Expert</div>
+      <div class="profile-meta">
+        <span class="meta-item">📍 <strong>Nigeria</strong></span>
+        <span class="meta-item">🌐 <strong>English, Hausa, Arabic</strong></span>
+        <span class="meta-item">⏰ Responds in <strong>&lt; 1 hour</strong></span>
+        <span class="meta-item">📅 Member since <strong>Jan 2025</strong></span>
+        <span class="meta-item" style="color:var(--green);">🟢 <strong>Online Now</strong></span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button class="hire-btn" onclick="openHireModal()">🚀 HIRE ME</button>
+      <button class="msg-btn" onclick="toast('Opening chat...')">💬 MESSAGE</button>
+      <button class="save-btn-profile" id="saveBtn" onclick="toggleSave()">🤍</button>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="sb-val" id="sv1">0</div>
+      <div class="sb-lbl">Orders Done</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-val" style="color:var(--yellow);">4.9★</div>
+      <div class="sb-lbl">Avg Rating</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-val" id="sv2">0</div>
+      <div class="sb-lbl">Repeat Clients</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-val">98%</div>
+      <div class="sb-lbl">On Time</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-val" id="sv3">0</div>
+      <div class="sb-lbl">Profile Views</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-val">$8.4K</div>
+      <div class="sb-lbl">Earned</div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="profile-layout">
+
+    <!-- MAIN -->
+    <div class="profile-main">
+
+      <!-- TABS -->
+      <div class="tab-row">
+        <div class="tab-item active" onclick="switchTab(this,'about')">About</div>
+        <div class="tab-item" onclick="switchTab(this,'gigs')">My Gigs (8)</div>
+        <div class="tab-item" onclick="switchTab(this,'portfolio')">Portfolio</div>
+        <div class="tab-item" onclick="switchTab(this,'reviews')">Reviews (47)</div>
+        <div class="tab-item" onclick="switchTab(this,'skills')">Skills</div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="tab-content active" id="tab-about">
+        <div class="pcard" style="margin-bottom:1.5rem;">
+          <div class="pcard-title"><span>👤</span> About Me</div>
+          <div class="about-text">
+            <p>I'm a senior blockchain developer with 5+ years of experience building and auditing smart contracts across Ethereum, Solana, BSC, and TON ecosystems. I specialize in DeFi protocols, NFT marketplaces, DAO governance systems, and token launches.</p>
+            <p>I have audited over 200 smart contracts with zero post-audit exploits. My clients include DeFi startups, NFT projects, and Web3 gaming companies across 30+ countries.</p>
+            <p>I also work extensively with Pi Network — building Pi Browser apps, integrating Pi SDK, and setting up Pi payment gateways. If you're building on Pi, I'm your guy.</p>
+          </div>
+        </div>
+
+        <div class="pcard" style="margin-bottom:1.5rem;">
+          <div class="pcard-title"><span>🏆</span> Certifications & Education</div>
+          <div class="cert-item">
+            <div class="cert-ico">🔐</div>
+            <div><div class="cert-name">Certified Ethereum Developer</div><div class="cert-issuer">ConsenSys Academy • 2023</div></div>
+            <div class="cert-badge">VERIFIED</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-ico">◎</div>
+            <div><div class="cert-name">Solana Developer Certification</div><div class="cert-issuer">Solana Foundation • 2024</div></div>
+            <div class="cert-badge">VERIFIED</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-ico">🛡️</div>
+            <div><div class="cert-name">Blockchain Security Expert</div><div class="cert-issuer">Trail of Bits • 2024</div></div>
+            <div class="cert-badge">VERIFIED</div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-ico">π</div>
+            <div><div class="cert-name">Pi Network Pioneer Developer</div><div class="cert-issuer">Pi Core Team • 2024</div></div>
+            <div class="cert-badge">VERIFIED</div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <div class="pcard-title"><span>⚡</span> Technical Expertise</div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">Solidity / Smart Contracts</span><span class="sp-pct">98%</span></div><div class="sp-track"><div class="sp-fill" style="width:98%"></div></div></div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">DeFi Protocol Development</span><span class="sp-pct">95%</span></div><div class="sp-track"><div class="sp-fill" style="width:95%"></div></div></div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">Smart Contract Security Auditing</span><span class="sp-pct">92%</span></div><div class="sp-track"><div class="sp-fill" style="width:92%"></div></div></div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">Rust / Solana Development</span><span class="sp-pct">85%</span></div><div class="sp-track"><div class="sp-fill" style="width:85%"></div></div></div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">Pi Network SDK</span><span class="sp-pct">90%</span></div><div class="sp-track"><div class="sp-fill" style="width:90%"></div></div></div>
+          <div class="skill-progress"><div class="sp-hdr"><span class="sp-lbl">Web3.js / Ethers.js</span><span class="sp-pct">96%</span></div><div class="sp-track"><div class="sp-fill" style="width:96%"></div></div></div>
+        </div>
+      </div>
+
+      <!-- GIGS -->
+      <div class="tab-content" id="tab-gigs">
+        <div class="gig-row">
+          <div class="pgig" onclick="openHireModal()">
+            <div class="pgig-thumb" style="background:linear-gradient(135deg,rgba(139,48,255,0.2),rgba(0,245,255,0.1))">📄</div>
+            <div class="pgig-info">
+              <div class="pgig-title">I will develop and audit your smart contract on Ethereum, BSC or Solana</div>
+              <div class="pgig-meta">
+                <span class="pgig-stars">★★★★★</span>
+                <span>4.9 (47 reviews)</span>
+                <span>📦 32 orders</span>
+                <span>⏱ 3 days</span>
+              </div>
+            </div>
+            <div class="pgig-price">From $200</div>
+          </div>
+          <div class="pgig" onclick="openHireModal()">
+            <div class="pgig-thumb" style="background:linear-gradient(135deg,rgba(0,245,255,0.15),rgba(139,48,255,0.08))">🔍</div>
+            <div class="pgig-info">
+              <div class="pgig-title">I will perform a complete blockchain security audit with PDF report</div>
+              <div class="pgig-meta">
+                <span class="pgig-stars">★★★★★</span>
+                <span>5.0 (23 reviews)</span>
+                <span>📦 14 orders</span>
+                <span>⏱ 4 days</span>
+              </div>
+            </div>
+            <div class="pgig-price">From $500</div>
+          </div>
+          <div class="pgig" onclick="openHireModal()">
+            <div class="pgig-thumb" style="background:linear-gradient(135deg,rgba(139,48,255,0.15),rgba(0,245,255,0.08))">π</div>
+            <div class="pgig-info">
+              <div class="pgig-title">I will build your Pi Network app with Pi SDK and Pi payment integration</div>
+              <div class="pgig-meta">
+                <span class="pgig-stars">★★★★★</span>
+                <span>4.8 (12 reviews)</span>
+                <span>📦 8 orders</span>
+                <span>⏱ 5 days</span>
+              </div>
+            </div>
+            <div class="pgig-price">From $150</div>
+          </div>
+          <div class="pgig" onclick="openHireModal()">
+            <div class="pgig-thumb" style="background:linear-gradient(135deg,rgba(255,152,0,0.15),rgba(255,68,68,0.08))">🤖</div>
+            <div class="pgig-info">
+              <div class="pgig-title">I will create a custom Telegram bot with crypto alerts and Web3 integration</div>
+              <div class="pgig-meta">
+                <span class="pgig-stars">★★★★☆</span>
+                <span>4.7 (9 reviews)</span>
+                <span>📦 6 orders</span>
+                <span>⏱ 2 days</span>
+              </div>
+            </div>
+            <div class="pgig-price">From $80</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PORTFOLIO -->
+      <div class="tab-content" id="tab-portfolio">
+        <div class="portfolio-grid">
+          <div class="port-item" style="background:linear-gradient(135deg,#1a0533,#0d2045)" onclick="toast('Opening DeFi Staking Protocol...')">
+            💰
+            <div class="port-label">DeFi Staking Protocol<div class="port-tech">Solidity • Ethereum</div></div>
+          </div>
+          <div class="port-item" style="background:linear-gradient(135deg,#0a2a1a,#052015)" onclick="toast('Opening NFT Marketplace...')">
+            🎨
+            <div class="port-label">NFT Marketplace<div class="port-tech">Solidity • ERC-721</div></div>
+          </div>
+          <div class="port-item" style="background:linear-gradient(135deg,#1a0d26,#0d0726)" onclick="toast('Opening Pi Browser App...')">
+            π
+            <div class="port-label">Pi Commerce App<div class="port-tech">Pi SDK • React</div></div>
+          </div>
+          <div class="port-item" style="background:linear-gradient(135deg,#001a26,#001020)" onclick="toast('Opening DEX...')">
+            🔄
+            <div class="port-label">Solana DEX<div class="port-tech">Rust • Anchor</div></div>
+          </div>
+          <div class="port-item" style="background:linear-gradient(135deg,#261500,#1a0d00)" onclick="toast('Opening DAO...')">
+            🏛️
+            <div class="port-label">DAO Governance<div class="port-tech">EVM • Compound</div></div>
+          </div>
+          <div class="port-item" style="background:linear-gradient(135deg,#0d1f33,#051428)" onclick="toast('Opening TON Game...')">
+            🎮
+            <div class="port-label">TON Mini App Game<div class="port-tech">FunC • Telegram</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="tab-content" id="tab-reviews">
+        <div class="reviews-summary">
+          <div style="text-align:center;">
+            <div class="big-rating">4.9</div>
+            <div style="color:var(--yellow);font-size:1.2rem;margin:0.4rem 0;">★★★★★</div>
+            <div style="font-size:0.7rem;color:var(--grey);font-family:var(--fm);">47 reviews</div>
+          </div>
+          <div class="rating-breakdown">
+            <div class="rb-row"><span class="rb-stars">★★★★★</span><div class="rb-bar"><div class="rb-fill" style="width:90%"></div></div><span class="rb-count">42</span></div>
+            <div class="rb-row"><span class="rb-stars">★★★★☆</span><div class="rb-bar"><div class="rb-fill" style="width:10%"></div></div><span class="rb-count">4</span></div>
+            <div class="rb-row"><span class="rb-stars">★★★☆☆</span><div class="rb-bar"><div class="rb-fill" style="width:2%"></div></div><span class="rb-count">1</span></div>
+            <div class="rb-row"><span class="rb-stars">★★☆☆☆</span><div class="rb-bar"><div class="rb-fill" style="width:0%"></div></div><span class="rb-count">0</span></div>
+            <div class="rb-row"><span class="rb-stars">★☆☆☆☆</span><div class="rb-bar"><div class="rb-fill" style="width:0%"></div></div><span class="rb-count">0</span></div>
+          </div>
+          <div class="rating-cats">
+            <div class="rc-row"><span class="rc-lbl">Communication</span><span class="rc-val">5.0★</span></div>
+            <div class="rc-row"><span class="rc-lbl">Code Quality</span><span class="rc-val">4.9★</span></div>
+            <div class="rc-row"><span class="rc-lbl">Delivery Time</span><span class="rc-val">4.8★</span></div>
+            <div class="rc-row"><span class="rc-lbl">Value for Money</span><span class="rc-val">4.9★</span></div>
+          </div>
+        </div>
+
+        <div class="review-item">
+          <div class="rev-hdr">
+            <div class="rev-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>
+            <div><div class="rev-name">Luna Martinez</div><div class="rev-info">Singapore • Smart Contract Dev • May 2026</div></div>
+            <div style="margin-left:auto;font-family:var(--fd);font-size:0.72rem;color:var(--cyan);">$400</div>
+          </div>
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-text">"Ahmed is absolutely exceptional. He delivered a fully audited DeFi staking contract ahead of schedule with zero bugs. His communication was perfect throughout. I'll definitely hire again for our next phase!"</div>
+          <div class="rev-helpful">👍 Was this helpful? (12 found helpful)</div>
+        </div>
+
+        <div class="review-item">
+          <div class="rev-hdr">
+            <div class="rev-av" style="background:linear-gradient(135deg,#00c851,#007e33)">RP</div>
+            <div><div class="rev-name">Rahul Patel</div><div class="rev-info">India • Security Audit • Apr 2026</div></div>
+            <div style="margin-left:auto;font-family:var(--fd);font-size:0.72rem;color:var(--cyan);">$600</div>
+          </div>
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-text">"Best blockchain auditor I've worked with. Found 3 critical vulnerabilities in our contract that could have cost us everything. The PDF report was incredibly detailed. Worth every penny and more."</div>
+          <div class="rev-helpful">👍 Was this helpful? (8 found helpful)</div>
+        </div>
+
+        <div class="review-item">
+          <div class="rev-hdr">
+            <div class="rev-av" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DK</div>
+            <div><div class="rev-name">David Kim</div><div class="rev-info">South Korea • Pi Network App • Mar 2026</div></div>
+            <div style="margin-left:auto;font-family:var(--fd);font-size:0.72rem;color:var(--cyan);">200 Pi</div>
+          </div>
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-text">"Ahmed built our Pi Network commerce app from scratch. Deep knowledge of Pi SDK, Pi Payments, and Pi Browser integration. Launched on time and works perfectly. Highly recommended for Pi developers!"</div>
+          <div class="rev-helpful">👍 Was this helpful? (6 found helpful)</div>
+        </div>
+
+        <div class="review-item">
+          <div class="rev-hdr">
+            <div class="rev-av" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">FH</div>
+            <div><div class="rev-name">Fatima Hassan</div><div class="rev-info">UAE • Telegram Bot • Feb 2026</div></div>
+            <div style="margin-left:auto;font-family:var(--fd);font-size:0.72rem;color:var(--cyan);">$80</div>
+          </div>
+          <div class="rev-stars">★★★★☆</div>
+          <div class="rev-text">"Great Telegram bot with all the features I needed — price alerts, wallet tracking, and community commands. Delivery was one day early. Minor UI fix needed but he sorted it immediately."</div>
+          <div class="rev-helpful">👍 Was this helpful? (4 found helpful)</div>
+        </div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="tab-content" id="tab-skills">
+        <div class="pcard" style="margin-bottom:1rem;">
+          <div class="pcard-title"><span>🔥</span> Expert Level</div>
+          <div class="skills-cloud">
+            <span class="skill-tag expert">Solidity</span>
+            <span class="skill-tag expert">Smart Contracts</span>
+            <span class="skill-tag expert">DeFi</span>
+            <span class="skill-tag expert">EVM</span>
+            <span class="skill-tag expert">Web3.js</span>
+            <span class="skill-tag expert">Ethers.js</span>
+            <span class="skill-tag expert">OpenZeppelin</span>
+            <span class="skill-tag expert">Hardhat</span>
+          </div>
+        </div>
+        <div class="pcard" style="margin-bottom:1rem;">
+          <div class="pcard-title"><span>⚡</span> Advanced</div>
+          <div class="skills-cloud">
+            <span class="skill-tag advanced">Rust</span>
+            <span class="skill-tag advanced">Solana</span>
+            <span class="skill-tag advanced">Anchor</span>
+            <span class="skill-tag advanced">Pi Network</span>
+            <span class="skill-tag advanced">TON / FunC</span>
+            <span class="skill-tag advanced">Security Auditing</span>
+            <span class="skill-tag advanced">Slither</span>
+            <span class="skill-tag advanced">Mythril</span>
+            <span class="skill-tag advanced">React</span>
+            <span class="skill-tag advanced">Node.js</span>
+          </div>
+        </div>
+        <div class="pcard">
+          <div class="pcard-title"><span>✨</span> Intermediate</div>
+          <div class="skills-cloud">
+            <span class="skill-tag intermediate">Python</span>
+            <span class="skill-tag intermediate">GraphQL</span>
+            <span class="skill-tag intermediate">IPFS</span>
+            <span class="skill-tag intermediate">The Graph</span>
+            <span class="skill-tag intermediate">Chainlink</span>
+            <span class="skill-tag intermediate">Docker</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /profile-main -->
+
+    <!-- SIDEBAR -->
+    <div class="profile-sidebar">
+
+      <!-- ORDER CARD -->
+      <div class="scard">
+        <div class="sc-title">📦 Order a Package</div>
+        <div class="pkg-selector">
+          <div class="pkg-opt" onclick="selectPkg(this)">
+            <div class="pkg-hdr"><div class="pkg-name basic">BASIC</div><div class="pkg-price">$200</div></div>
+            <div class="pkg-desc">Simple contract deployment</div>
+            <div class="pkg-feats"><div class="pkg-feat">ERC-20 Token Contract</div><div class="pkg-feat">Basic Testing</div><div class="pkg-feat">Source Code</div></div>
+            <div class="pkg-meta-row"><span>⏱ 3 days</span><span>🔄 2 revisions</span></div>
+          </div>
+          <div class="pkg-opt active" onclick="selectPkg(this)">
+            <div class="pkg-hdr"><div class="pkg-name std">STANDARD</div><div class="pkg-price">$400</div></div>
+            <div class="pkg-desc">Full contract + security audit</div>
+            <div class="pkg-feats"><div class="pkg-feat">Custom Smart Contract</div><div class="pkg-feat">Security Audit Report</div><div class="pkg-feat">Full Documentation</div><div class="pkg-feat">Deployment Support</div></div>
+            <div class="pkg-meta-row"><span>⏱ 5 days</span><span>🔄 5 revisions</span></div>
+          </div>
+          <div class="pkg-opt" onclick="selectPkg(this)">
+            <div class="pkg-hdr"><div class="pkg-name prem">PREMIUM</div><div class="pkg-price">$800</div></div>
+            <div class="pkg-desc">Enterprise DeFi protocol + support</div>
+            <div class="pkg-feats"><div class="pkg-feat">Full DeFi Protocol</div><div class="pkg-feat">Advanced Audit</div><div class="pkg-feat">Gas Optimization</div><div class="pkg-feat">30-day Support</div></div>
+            <div class="pkg-meta-row"><span>⏱ 10 days</span><span>🔄 Unlimited</span></div>
+          </div>
+        </div>
+        <button class="order-btn" onclick="openHireModal()">🔒 ORDER — ESCROW PROTECTED</button>
+        <div class="escrow-note">💎 Payment secured by smart contract</div>
+        <div class="report-link" onclick="toast('Report submitted')">⚑ Report this freelancer</div>
+      </div>
+
+      <!-- INFO CARD -->
+      <div class="scard">
+        <div class="sc-title">📋 Quick Info</div>
+        <div class="info-list">
+          <div class="info-row"><div class="info-ico">📍</div><div class="info-content"><div class="info-label">Location</div><div class="info-value">🇳🇬 Nigeria (UTC+1)</div></div></div>
+          <div class="info-row"><div class="info-ico">⏱</div><div class="info-content"><div class="info-label">Response Time</div><div class="info-value">Under 1 hour</div></div></div>
+          <div class="info-row"><div class="info-ico">🌐</div><div class="info-content"><div class="info-label">Languages</div><div class="info-value">English, Hausa, Arabic</div></div></div>
+          <div class="info-row"><div class="info-ico">💰</div><div class="info-content"><div class="info-label">Preferred Payment</div><div class="info-value">π Pi Network, USDT</div></div></div>
+          <div class="info-row"><div class="info-ico">📅</div><div class="info-content"><div class="info-label">Last Active</div><div class="info-value" style="color:var(--green);">Online right now</div></div></div>
+        </div>
+      </div>
+
+      <!-- SHARE CARD -->
+      <div class="scard">
+        <div class="sc-title">🔗 Share Profile</div>
+        <div class="share-row">
+          <button class="share-btn" onclick="toast('Copied link!')">🔗 Link</button>
+          <button class="share-btn" onclick="toast('Shared on Twitter!')">𝕏</button>
+          <button class="share-btn" onclick="toast('Shared on Telegram!')">✈️</button>
+          <button class="share-btn" onclick="toast('Shared on LinkedIn!')">in</button>
+        </div>
+      </div>
+
+      <!-- SIMILAR FREELANCERS -->
+      <div class="scard">
+        <div class="sc-title">👥 Similar Freelancers</div>
+        <div class="similar-grid">
+          <div class="sim-item" onclick="toast('Opening profile...')">
+            <div class="sim-av" style="background:linear-gradient(135deg,#00c851,#007e33)">JO</div>
+            <div><div class="sim-name">James O.</div><div class="sim-title">Solana Dev • 4.7★</div></div>
+            <div class="sim-rate">$150</div>
+          </div>
+          <div class="sim-item" onclick="toast('Opening profile...')">
+            <div class="sim-av" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DL</div>
+            <div><div class="sim-name">David L.</div><div class="sim-title">Security Auditor • 5.0★</div></div>
+            <div class="sim-rate">$500</div>
+          </div>
+          <div class="sim-item" onclick="toast('Opening profile...')">
+            <div class="sim-av" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">KM</div>
+            <div><div class="sim-name">Kwame M.</div><div class="sim-title">Pi Network Dev • 4.8★</div></div>
+            <div class="sim-rate">$120</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sidebar -->
+  </div><!-- /layout -->
+</div><!-- /wrap -->
+
+<!-- HIRE MODAL -->
+<div class="modal-ov" id="hireModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeHireModal()">×</div>
+    <div class="modal-ttl">🚀 Hire Ahmed Kabiru</div>
+    <div class="modal-sub">Fill in project details. Payment is secured in escrow until delivery.</div>
+
+    <div class="fi">
+      <label class="fl">Selected Package</label>
+      <select class="fselect" id="selectedPkg">
+        <option value="200">BASIC — $200 USDT (3 days, 2 revisions)</option>
+        <option value="400" selected>STANDARD — $400 USDT (5 days, 5 revisions)</option>
+        <option value="800">PREMIUM — $800 USDT (10 days, unlimited revisions)</option>
+      </select>
+    </div>
+    <div class="fi">
+      <label class="fl">Project Title</label>
+      <input type="text" class="finput" placeholder="Brief title of your project">
+    </div>
+    <div class="fi">
+      <label class="fl">Project Description</label>
+      <textarea class="ftarea" placeholder="Describe your project requirements in detail..."></textarea>
+    </div>
+    <div class="frow">
+      <div class="fi">
+        <label class="fl">Blockchain</label>
+        <select class="fselect">
+          <option>Ethereum</option>
+          <option>BSC</option>
+          <option>Solana</option>
+          <option>Pi Network</option>
+          <option>TON</option>
+          <option>Polygon</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label class="fl">Deadline</label>
+        <input type="date" class="finput">
+      </div>
+    </div>
+    <div class="fi">
+      <label class="fl">Pay With</label>
+      <select class="fselect">
+        <option>π Pi Network (Recommended — 2% discount)</option>
+        <option>USDT (TRC-20)</option>
+        <option>USDT (ERC-20)</option>
+        <option>Solana (SOL)</option>
+        <option>BNB (BSC)</option>
+        <option>TON</option>
+      </select>
+    </div>
+    <div style="background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.15);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:0.78rem;color:var(--grey);">
+      🔒 <strong style="color:var(--white);">Escrow Protection:</strong> Your payment will be locked in a smart contract. Ahmed only receives funds after you approve the delivery. 100% safe.
+    </div>
+    <button class="sub-btn" onclick="placeOrder()">🔒 CONFIRM ORDER & PAY TO ESCROW</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// COUNTERS
+function animateVal(id,target,prefix='',suffix='') {
+  const el = document.getElementById(id); if(!el) return;
+  let count = 0; const step = target/60;
+  const t = setInterval(()=>{
+    count = Math.min(count+step,target);
+    el.textContent = prefix+Math.floor(count).toLocaleString()+suffix;
+    if(count>=target) clearInterval(t);
+  },20);
+}
+setTimeout(()=>{
+  animateVal('sv1',142);
+  animateVal('sv2',38);
+  animateVal('sv3',4820);
+},300);
+
+// TABS
+function switchTab(el, tabId) {
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+tabId).classList.add('active');
+}
+
+// PACKAGE SELECT
+function selectPkg(el) {
+  document.querySelectorAll('.pkg-opt').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// SAVE
+let saved = false;
+function toggleSave() {
+  saved = !saved;
+  document.getElementById('saveBtn').textContent = saved ? '❤️' : '🤍';
+  toast(saved ? 'Added to favorites!' : 'Removed from favorites');
+}
+
+// MODAL
+function openHireModal(){document.getElementById('hireModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeHireModal(){document.getElementById('hireModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('hireModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeHireModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHireModal();});
+
+function placeOrder() {
+  closeHireModal();
+  toast('🎉 Order placed! Payment locked in escrow. Ahmed is notified!');
+}
+
+// TOAST
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(()=>el.style.transform='translateX(-50%) translateY(100px)',3000);
+}
+</script>
+</body>
+</html>
