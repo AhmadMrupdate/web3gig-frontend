@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Weapon — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#02040a;--deep:#050d1f;--dark:#0a1628;--mid:#0d2045;
+  --purple:#8b30ff;--purple2:#a855f7;--cyan:#00f5ff;--cyan2:#00c8d4;
+  --white:#f0f4ff;--grey:#8899bb;--grey2:#4a5568;
+  --border:rgba(0,245,255,0.1);--bpurple:rgba(139,48,255,0.2);
+  --card:rgba(10,22,40,0.9);--cglow:rgba(0,245,255,0.08);--pglow:rgba(139,48,255,0.12);
+  --green:#00e676;--yellow:#ffd700;--red:#ff4444;--orange:#ff9800;
+  --fd:'Orbitron',sans-serif;--fb:'Exo 2',sans-serif;--fm:'Share Tech Mono',monospace;
+  --sw:260px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--fb);min-height:100vh;display:flex;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--black);}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,245,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.02) 1px,transparent 1px);background-size:50px 50px;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);min-width:var(--sw);background:var(--deep);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;display:flex;flex-direction:column;}
+.sb-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border);}
+.sb-logo-text{font-family:var(--fd);font-size:0.95rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-family:var(--fm);font-size:0.6rem;color:var(--red);letter-spacing:0.2em;margin-top:0.2rem;display:flex;align-items:center;gap:0.4rem;}
+.admin-dot{width:7px;height:7px;background:var(--red);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.admin-card{margin:1rem;background:linear-gradient(135deg,rgba(255,68,68,0.1),rgba(139,48,255,0.08));border:1px solid rgba(255,68,68,0.25);border-radius:10px;padding:0.85rem;display:flex;align-items:center;gap:0.75rem;}
+.admin-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+.admin-name{font-family:var(--fd);font-size:0.72rem;font-weight:600;}
+.admin-role{font-size:0.58rem;color:var(--red);font-family:var(--fm);margin-top:0.1rem;}
+
+.nav-sec{padding:0.75rem 1rem 0.25rem;}
+.nav-lbl{font-size:0.58rem;color:var(--grey2);font-family:var(--fm);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.85rem;border-radius:8px;margin-bottom:0.2rem;cursor:pointer;transition:all 0.2s;font-size:0.8rem;color:var(--grey);position:relative;}
+.nav-item:hover{background:var(--cglow);color:var(--white);}
+.nav-item.active{background:rgba(255,68,68,0.1);color:var(--white);border:1px solid rgba(255,68,68,0.2);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+.nav-ico{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.58rem;padding:0.1rem 0.4rem;border-radius:100px;font-family:var(--fm);}
+.nav-badge.orange{background:var(--orange);}
+.nav-badge.green{background:var(--green);color:var(--black);}
+
+.sb-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--border);}
+.sys-status{background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:0.75rem;}
+.sys-lbl{font-size:0.58rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.15em;margin-bottom:0.5rem;}
+.sys-row{display:flex;justify-content:space-between;font-size:0.65rem;margin-bottom:0.3rem;font-family:var(--fm);}
+.sys-row span:last-child{color:var(--green);}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;position:relative;z-index:1;}
+
+/* TOPBAR */
+.topbar{height:64px;background:rgba(2,4,10,0.92);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100;}
+.tb-left{display:flex;align-items:center;gap:1rem;}
+.page-title{font-family:var(--fd);font-size:1rem;font-weight:700;}
+.page-sub{font-size:0.65rem;color:var(--grey);font-family:var(--fm);margin-top:0.1rem;}
+.tb-right{display:flex;gap:0.75rem;align-items:center;}
+.tb-search{display:flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;width:220px;}
+.tb-search input{background:none;border:none;color:var(--white);font-family:var(--fb);font-size:0.82rem;outline:none;width:100%;}
+.tb-search input::placeholder{color:var(--grey);}
+.ib{width:36px;height:36px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all 0.2s;position:relative;}
+.ib:hover{border-color:rgba(0,245,255,0.3);}
+.ib-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border:2px solid var(--black);border-radius:50%;}
+
+/* CONTENT */
+.content{padding:2rem;flex:1;}
+
+/* PAGES */
+.pg{display:none;}
+.pg.active{display:block;}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2rem;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;transition:all 0.3s;animation:fadeUp 0.5s ease both;}
+.scard:hover{transform:translateY(-2px);}
+.scard::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;filter:blur(30px);opacity:0.35;}
+.scard.red::before{background:var(--red);}
+.scard.cyan::before{background:var(--cyan);}
+.scard.green::before{background:var(--green);}
+.scard.orange::before{background:var(--orange);}
+.scard.purple::before{background:var(--purple);}
+.sc-lbl{font-size:0.62rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.65rem;}
+.sc-val{font-family:var(--fd);font-size:1.8rem;font-weight:700;line-height:1;}
+.scard.red .sc-val{color:var(--red);}
+.scard.cyan .sc-val{color:var(--cyan);}
+.scard.green .sc-val{color:var(--green);}
+.scard.orange .sc-val{color:var(--orange);}
+.scard.purple .sc-val{color:var(--purple2);}
+.sc-chg{font-size:0.68rem;margin-top:0.5rem;display:flex;align-items:center;gap:0.3rem;}
+.sc-chg.up{color:var(--green);}
+.sc-chg.dn{color:var(--red);}
+.sc-ico{position:absolute;bottom:1rem;right:1.25rem;font-size:2rem;opacity:0.12;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;animation:fadeUp 0.5s ease both;}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
+.card-ttl{font-family:var(--fd);font-size:0.82rem;font-weight:700;letter-spacing:0.05em;}
+.card-act{font-size:0.68rem;color:var(--cyan);cursor:pointer;font-family:var(--fm);}
+
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1.5rem;}
+.gridEq{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:0.6rem;color:var(--grey);font-family:var(--fm);letter-spacing:0.12em;text-transform:uppercase;padding:0.55rem 0.75rem;text-align:left;border-bottom:1px solid var(--border);}
+.tbl td{padding:0.8rem 0.75rem;font-size:0.8rem;border-bottom:1px solid rgba(0,245,255,0.03);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(0,245,255,0.02);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:0.3rem;padding:0.18rem 0.6rem;border-radius:100px;font-size:0.6rem;font-family:var(--fm);letter-spacing:0.06em;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.badge.active{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.25);}
+.badge.active::before{background:var(--green);}
+.badge.pending{background:rgba(255,152,0,0.1);color:var(--orange);border:1px solid rgba(255,152,0,0.25);}
+.badge.pending::before{background:var(--orange);}
+.badge.banned{background:rgba(255,68,68,0.1);color:var(--red);border:1px solid rgba(255,68,68,0.25);}
+.badge.banned::before{background:var(--red);}
+.badge.verified{background:rgba(0,245,255,0.08);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);}
+.badge.verified::before{background:var(--cyan);}
+.badge.dispute{background:rgba(255,152,0,0.1);color:var(--orange);border:1px solid rgba(255,152,0,0.25);}
+.badge.dispute::before{background:var(--orange);}
+.badge.resolved{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.25);}
+.badge.resolved::before{background:var(--green);}
+
+/* ACTION BUTTONS */
+.act-btns{display:flex;gap:0.4rem;}
+.act-btn{padding:0.25rem 0.65rem;border-radius:5px;font-family:var(--fd);font-size:0.58rem;letter-spacing:0.06em;cursor:pointer;border:none;transition:all 0.2s;}
+.act-btn.view{background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);}
+.act-btn.ban{background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.25);color:var(--red);}
+.act-btn.verify{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:var(--green);}
+.act-btn.approve{background:rgba(139,48,255,0.1);border:1px solid rgba(139,48,255,0.25);color:var(--purple2);}
+.act-btn.warn{background:rgba(255,152,0,0.1);border:1px solid rgba(255,152,0,0.25);color:var(--orange);}
+.act-btn:hover{transform:translateY(-1px);opacity:0.85;}
+
+/* USER CELL */
+.user-cell{display:flex;align-items:center;gap:0.6rem;}
+.u-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;}
+.u-name{font-size:0.8rem;font-weight:600;}
+.u-email{font-size:0.62rem;color:var(--grey);font-family:var(--fm);}
+
+/* CHARTS */
+.chart-bars{display:flex;align-items:flex-end;gap:0.4rem;height:100px;margin-top:1rem;}
+.bar-w{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.3rem;}
+.bar{width:100%;border-radius:3px 3px 0 0;transition:height 1s ease;cursor:pointer;position:relative;}
+.bar.purple-b{background:linear-gradient(180deg,var(--purple),rgba(139,48,255,0.15));}
+.bar.cyan-b{background:linear-gradient(180deg,var(--cyan),rgba(0,245,255,0.1));}
+.bar.green-b{background:linear-gradient(180deg,var(--green),rgba(0,230,118,0.1));}
+.bar:hover::after{content:attr(data-v);position:absolute;top:-1.4rem;left:50%;transform:translateX(-50%);font-size:0.58rem;color:var(--white);font-family:var(--fm);white-space:nowrap;}
+.bar-lbl{font-size:0.55rem;color:var(--grey);font-family:var(--fm);}
+
+/* MINI STATS */
+.mini-stats{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.mstat{text-align:center;}
+.mstat-v{font-family:var(--fd);font-size:1.1rem;font-weight:700;}
+.mstat-l{font-size:0.6rem;color:var(--grey);font-family:var(--fm);margin-top:0.15rem;}
+
+/* PROGRESS */
+.prog-item{margin-bottom:0.85rem;}
+.prog-hdr{display:flex;justify-content:space-between;margin-bottom:0.35rem;font-size:0.72rem;}
+.prog-lbl{color:var(--grey);}
+.prog-val{font-family:var(--fm);color:var(--cyan);}
+.prog-track{height:4px;background:rgba(255,255,255,0.05);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:100px;}
+.prog-fill.cyan{background:linear-gradient(90deg,var(--cyan),var(--purple));}
+.prog-fill.purple{background:linear-gradient(90deg,var(--purple),#e879f9);}
+.prog-fill.green{background:var(--green);}
+.prog-fill.red{background:var(--red);}
+
+/* ACTIVITY */
+.act-feed{display:flex;flex-direction:column;gap:0;}
+.act-item{display:flex;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid rgba(0,245,255,0.04);}
+.act-item:last-child{border-bottom:none;}
+.act-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;}
+.act-ico.red{background:rgba(255,68,68,0.12);}
+.act-ico.green{background:rgba(0,230,118,0.1);}
+.act-ico.orange{background:rgba(255,152,0,0.1);}
+.act-ico.purple{background:rgba(139,48,255,0.12);}
+.act-ico.cyan{background:rgba(0,245,255,0.08);}
+.act-text{font-size:0.78rem;color:var(--grey);line-height:1.5;flex:1;}
+.act-text strong{color:var(--white);}
+.act-time{font-size:0.62rem;color:var(--grey2);font-family:var(--fm);flex-shrink:0;margin-top:0.15rem;}
+
+/* ANNOUNCEMENT */
+.ann-form{display:flex;flex-direction:column;gap:0.85rem;}
+.ann-input,.ann-textarea,.ann-select{width:100%;padding:0.7rem 1rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--fb);font-size:0.85rem;outline:none;transition:border-color 0.2s;}
+.ann-input:focus,.ann-textarea:focus,.ann-select:focus{border-color:rgba(0,245,255,0.4);}
+.ann-input::placeholder,.ann-textarea::placeholder{color:var(--grey);}
+.ann-textarea{resize:vertical;min-height:80px;}
+.ann-select option{background:var(--dark);}
+.ann-type-row{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.ann-type{padding:0.35rem 0.85rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;font-size:0.65rem;font-family:var(--fm);color:var(--grey);cursor:pointer;transition:all 0.2s;}
+.ann-type:hover,.ann-type.sel{background:rgba(139,48,255,0.15);border-color:var(--purple);color:var(--purple2);}
+.send-btn{padding:0.75rem 1.5rem;background:linear-gradient(135deg,var(--purple),var(--cyan2));border:none;border-radius:8px;color:white;font-family:var(--fd);font-size:0.68rem;letter-spacing:0.12em;cursor:pointer;transition:all 0.25s;}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 0 25px rgba(139,48,255,0.4);}
+
+/* DISPUTE CARD */
+.dispute-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,152,0,0.2);border-radius:10px;padding:1.1rem;margin-bottom:0.85rem;transition:all 0.2s;}
+.dispute-card:hover{border-color:rgba(255,152,0,0.4);}
+.dsp-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;}
+.dsp-id{font-family:var(--fm);font-size:0.65rem;color:var(--grey);}
+.dsp-title{font-family:var(--fd);font-size:0.82rem;margin-bottom:0.25rem;}
+.dsp-meta{font-size:0.72rem;color:var(--grey);margin-bottom:0.85rem;line-height:1.6;}
+.dsp-actions{display:flex;gap:0.5rem;}
+.dsp-btn{padding:0.35rem 0.85rem;border-radius:6px;font-family:var(--fd);font-size:0.6rem;letter-spacing:0.08em;cursor:pointer;border:none;transition:all 0.2s;}
+.dsp-btn.freelancer{background:rgba(139,48,255,0.12);border:1px solid var(--bpurple);color:var(--purple2);}
+.dsp-btn.client{background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);}
+.dsp-btn.close{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:var(--green);}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(2,4,10,0.92);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:1rem;}
+.modal-ov.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark);border:1px solid var(--bpurple);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:2rem;position:relative;transform:scale(0.96);transition:transform 0.3s;}
+.modal-ov.open .modal{transform:scale(1);}
+.modal-close{position:absolute;top:1.25rem;right:1.25rem;width:32px;height:32px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--grey);transition:all 0.2s;}
+.modal-close:hover{color:var(--white);}
+.modal-ttl{font-family:var(--fd);font-size:1rem;font-weight:700;margin-bottom:0.4rem;}
+.modal-sub{font-size:0.8rem;color:var(--grey);margin-bottom:1.5rem;}
+.fi{margin-bottom:1rem;}
+.fl{font-size:0.6rem;font-family:var(--fm);letter-spacing:0.12em;color:var(--grey);margin-bottom:0.35rem;display:block;text-transform:uppercase;}
+.finput{width:100%;padding:0.7rem 1rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--fb);font-size:0.85rem;outline:none;transition:border-color 0.2s;}
+.finput:focus{border-color:rgba(0,245,255,0.4);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+
+/* REVENUE PIE (CSS only) */
+.rev-breakdown{display:flex;flex-direction:column;gap:0.6rem;margin-top:1rem;}
+.rev-row{display:flex;align-items:center;gap:0.75rem;}
+.rev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.rev-label{font-size:0.75rem;color:var(--grey);flex:1;}
+.rev-val{font-family:var(--fm);font-size:0.72rem;color:var(--white);}
+.rev-pct{font-family:var(--fm);font-size:0.65rem;color:var(--grey2);}
+
+/* TOP COUNTRIES */
+.country-row{display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid rgba(0,245,255,0.04);}
+.country-row:last-child{border-bottom:none;}
+.country-flag{font-size:1.2rem;}
+.country-name{font-size:0.78rem;flex:1;}
+.country-bar{flex:2;height:4px;background:rgba(255,255,255,0.05);border-radius:100px;overflow:hidden;}
+.country-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:100px;}
+.country-pct{font-family:var(--fm);font-size:0.65rem;color:var(--grey);min-width:35px;text-align:right;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid2,.gridEq{grid-template-columns:1fr;}
+  .grid3{grid-template-columns:1fr;}
+  .tb-search{display:none;}
+}
+@media(max-width:500px){
+  .stats-row{grid-template-columns:1fr;}
+  .content{padding:1rem;}
+}
+
+/* MOB TOGGLE */
+.mob-tog{display:none;position:fixed;bottom:1.5rem;right:1.5rem;z-index:300;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--purple));border:none;font-size:1.2rem;cursor:pointer;box-shadow:0 0 25px rgba(255,68,68,0.4);}
+@media(max-width:900px){.mob-tog{display:flex;align-items:center;justify-content:center;}}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg,var(--red),var(--purple));color:white;padding:0.7rem 1.5rem;border-radius:100px;font-family:var(--fd);font-size:0.68rem;letter-spacing:0.08em;z-index:9999;transition:transform 0.4s;white-space:nowrap;box-shadow:0 10px 40px rgba(255,68,68,0.4);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-text">WEB3⚡WEAPON</div>
+    <div class="sb-logo-sub"><div class="admin-dot"></div> ADMIN CONTROL PANEL</div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-av">SA</div>
+    <div>
+      <div class="admin-name">Super Admin</div>
+      <div class="admin-role">🔴 ROOT ACCESS</div>
+    </div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-lbl">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview',this)"><span class="nav-ico">🏠</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('analytics',this)"><span class="nav-ico">📊</span> Analytics</div>
+    <div class="nav-item" onclick="showPage('revenue',this)"><span class="nav-ico">💰</span> Revenue</div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-lbl">Management</div>
+    <div class="nav-item" onclick="showPage('users',this)"><span class="nav-ico">👥</span> Users <span class="nav-badge">2</span></div>
+    <div class="nav-item" onclick="showPage('gigs',this)"><span class="nav-ico">📋</span> Gigs <span class="nav-badge orange">5</span></div>
+    <div class="nav-item" onclick="showPage('orders',this)"><span class="nav-ico">📦</span> Orders</div>
+    <div class="nav-item" onclick="showPage('disputes',this)"><span class="nav-ico">⚖️</span> Disputes <span class="nav-badge">3</span></div>
+    <div class="nav-item" onclick="showPage('transactions',this)"><span class="nav-ico">🔗</span> Transactions</div>
+  </div>
+
+  <div class="nav-sec">
+    <div class="nav-lbl">Tools</div>
+    <div class="nav-item" onclick="showPage('announce',this)"><span class="nav-ico">📢</span> Announcements</div>
+    <div class="nav-item" onclick="showPage('security',this)"><span class="nav-ico">🛡️</span> Security <span class="nav-badge">1</span></div>
+    <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-ico">⚙️</span> Settings</div>
+    <div class="nav-item" style="color:var(--red);" onclick="toast('Logging out...')"><span class="nav-ico">🚪</span> Logout</div>
+  </div>
+
+  <div class="sb-bottom">
+    <div class="sys-status">
+      <div class="sys-lbl">// SYSTEM STATUS</div>
+      <div class="sys-row"><span>API Server</span><span>● ONLINE</span></div>
+      <div class="sys-row"><span>Database</span><span>● ONLINE</span></div>
+      <div class="sys-row"><span>Escrow Smart Contract</span><span>● ACTIVE</span></div>
+      <div class="sys-row"><span>CPU Usage</span><span>24%</span></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="page-title" id="pageTitle">Dashboard Overview</div>
+        <div class="page-sub">// admin.web3weapon.io</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-search"><span>🔍</span><input type="text" placeholder="Search users, orders..."></div>
+      <div class="ib" onclick="toast('Refreshing data...')">🔄</div>
+      <div class="ib">🔔<div class="ib-dot"></div></div>
+      <div class="ib" onclick="openBanModal()">👤</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="pg active" id="pg-overview">
+      <div class="stats-row">
+        <div class="scard cyan" style="animation-delay:0.05s">
+          <div class="sc-lbl">Total Users</div>
+          <div class="sc-val" id="sc1">0</div>
+          <div class="sc-chg up">▲ 342 this week</div>
+          <div class="sc-ico">👥</div>
+        </div>
+        <div class="scard green" style="animation-delay:0.1s">
+          <div class="sc-lbl">Platform Revenue</div>
+          <div class="sc-val" id="sc2">$0</div>
+          <div class="sc-chg up">▲ 18% this month</div>
+          <div class="sc-ico">💰</div>
+        </div>
+        <div class="scard orange" style="animation-delay:0.15s">
+          <div class="sc-lbl">Active Disputes</div>
+          <div class="sc-val" id="sc3">0</div>
+          <div class="sc-chg dn">▼ Needs attention</div>
+          <div class="sc-ico">⚖️</div>
+        </div>
+        <div class="scard purple" style="animation-delay:0.2s">
+          <div class="sc-lbl">Gigs Pending</div>
+          <div class="sc-val" id="sc4">0</div>
+          <div class="sc-chg up">▲ Awaiting review</div>
+          <div class="sc-ico">📋</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- Revenue Chart -->
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-ttl">Revenue Overview (7 Days)</div>
+            <div class="card-act">Export ›</div>
+          </div>
+          <div class="mini-stats">
+            <div class="mstat"><div class="mstat-v" style="color:var(--cyan)">$24.8K</div><div class="mstat-l">THIS WEEK</div></div>
+            <div class="mstat"><div class="mstat-v" style="color:var(--green)">$98.4K</div><div class="mstat-l">THIS MONTH</div></div>
+            <div class="mstat"><div class="mstat-v" style="color:var(--purple2)">$842K</div><div class="mstat-l">TOTAL</div></div>
+          </div>
+          <div class="chart-bars">
+            <div class="bar-w"><div class="bar purple-b" style="height:45%" data-v="$3.1K"></div><div class="bar-lbl">Mon</div></div>
+            <div class="bar-w"><div class="bar purple-b" style="height:60%" data-v="$4.2K"></div><div class="bar-lbl">Tue</div></div>
+            <div class="bar-w"><div class="bar cyan-b" style="height:88%" data-v="$6.1K"></div><div class="bar-lbl">Wed</div></div>
+            <div class="bar-w"><div class="bar purple-b" style="height:55%" data-v="$3.8K"></div><div class="bar-lbl">Thu</div></div>
+            <div class="bar-w"><div class="bar cyan-b" style="height:92%" data-v="$6.4K"></div><div class="bar-lbl">Fri</div></div>
+            <div class="bar-w"><div class="bar green-b" style="height:75%" data-v="$5.2K"></div><div class="bar-lbl">Sat</div></div>
+            <div class="bar-w"><div class="bar purple-b" style="height:50%" data-v="$3.5K"></div><div class="bar-lbl">Sun</div></div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Live Activity</div><div class="card-act">View All ›</div></div>
+          <div class="act-feed">
+            <div class="act-item">
+              <div class="act-ico red">🚨</div>
+              <div class="act-text"><strong>Dispute filed</strong> — Order #W3W-2841 between Luna M. & Alex K.</div>
+              <div class="act-time">2m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico green">✅</div>
+              <div class="act-text"><strong>New freelancer verified</strong> — James O. passed KYC check</div>
+              <div class="act-time">8m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico orange">⚠️</div>
+              <div class="act-text"><strong>Suspicious login</strong> — Multiple failed attempts on user #4821</div>
+              <div class="act-time">14m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico purple">📋</div>
+              <div class="act-text"><strong>New gig submitted</strong> — "Pi Network App Dev" awaiting review</div>
+              <div class="act-time">22m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico cyan">💰</div>
+              <div class="act-text"><strong>Large transaction</strong> — $2,500 USDT escrow locked</div>
+              <div class="act-time">35m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico green">👤</div>
+              <div class="act-text"><strong>142 new users</strong> registered today across 28 countries</div>
+              <div class="act-time">1hr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Stats -->
+      <div class="grid3">
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">User Growth</div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Freelancers</span><span class="prog-val">32,400</span></div><div class="prog-track"><div class="prog-fill cyan" style="width:75%"></div></div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Clients</span><span class="prog-val">19,800</span></div><div class="prog-track"><div class="prog-fill purple" style="width:55%"></div></div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Verified Users</span><span class="prog-val">28,100</span></div><div class="prog-track"><div class="prog-fill green" style="width:68%"></div></div></div>
+          <div class="prog-item"><div class="prog-hdr"><span class="prog-lbl">Banned Users</span><span class="prog-val">342</span></div><div class="prog-track"><div class="prog-fill red" style="width:5%"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Top Countries</div></div>
+          <div class="country-row"><span class="country-flag">🇳🇬</span><span class="country-name">Nigeria</span><div class="country-bar"><div class="country-fill" style="width:85%"></div></div><span class="country-pct">18.4%</span></div>
+          <div class="country-row"><span class="country-flag">🇮🇳</span><span class="country-name">India</span><div class="country-bar"><div class="country-fill" style="width:70%"></div></div><span class="country-pct">14.2%</span></div>
+          <div class="country-row"><span class="country-flag">🇵🇭</span><span class="country-name">Philippines</span><div class="country-bar"><div class="country-fill" style="width:55%"></div></div><span class="country-pct">11.8%</span></div>
+          <div class="country-row"><span class="country-flag">🇺🇸</span><span class="country-name">USA</span><div class="country-bar"><div class="country-fill" style="width:45%"></div></div><span class="country-pct">9.3%</span></div>
+          <div class="country-row"><span class="country-flag">🇧🇷</span><span class="country-name">Brazil</span><div class="country-bar"><div class="country-fill" style="width:35%"></div></div><span class="country-pct">7.1%</span></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Revenue Sources</div></div>
+          <div class="rev-breakdown">
+            <div class="rev-row"><div class="rev-dot" style="background:var(--cyan)"></div><span class="rev-label">Gig Commissions (10%)</span><span class="rev-val">$52.4K</span><span class="rev-pct">62%</span></div>
+            <div class="rev-row"><div class="rev-dot" style="background:var(--purple2)"></div><span class="rev-label">Featured Gigs</span><span class="rev-val">$18.2K</span><span class="rev-pct">21%</span></div>
+            <div class="rev-row"><div class="rev-dot" style="background:var(--green)"></div><span class="rev-label">Pro Subscriptions</span><span class="rev-val">$9.8K</span><span class="rev-pct">12%</span></div>
+            <div class="rev-row"><div class="rev-dot" style="background:var(--orange)"></div><span class="rev-label">Ads & Promotions</span><span class="rev-val">$4.2K</span><span class="rev-pct">5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ USERS ══ -->
+    <div class="pg" id="pg-users">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button class="act-btn view" style="padding:0.4rem 1rem;" onclick="toast('Showing all users')">All Users</button>
+          <button class="act-btn verify" style="padding:0.4rem 1rem;" onclick="toast('Filtering freelancers')">Freelancers</button>
+          <button class="act-btn approve" style="padding:0.4rem 1rem;" onclick="toast('Filtering clients')">Clients</button>
+          <button class="act-btn ban" style="padding:0.4rem 1rem;" onclick="toast('Showing banned')">Banned</button>
+        </div>
+        <button class="send-btn" onclick="openBanModal()">+ Add User</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">All Users (52,200)</div><div class="card-act">Export CSV ›</div></div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>User</th><th>Role</th><th>Country</th><th>Earnings</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div><div><div class="u-name">Ahmed Kabiru</div><div class="u-email">ahmed@example.com</div></div></div></td>
+                <td><span class="badge verified">Freelancer</span></td>
+                <td>🇳🇬 Nigeria</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">$8,420</td>
+                <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">Jan 2026</td>
+                <td><span class="badge active">Active</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing user profile...')">View</button><button class="act-btn warn" onclick="toast('Warning sent!')">Warn</button><button class="act-btn ban" onclick="toast('User banned!')">Ban</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div><div><div class="u-name">Luna Martinez</div><div class="u-email">luna@example.com</div></div></div></td>
+                <td><span class="badge cyan">Client</span></td>
+                <td>🇸🇬 Singapore</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">$12,600</td>
+                <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">Feb 2026</td>
+                <td><span class="badge active">Active</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing user...')">View</button><button class="act-btn verify" onclick="toast('User verified!')">Verify</button><button class="act-btn ban" onclick="toast('User banned!')">Ban</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#00c851,#007e33)">JO</div><div><div class="u-name">James Okonkwo</div><div class="u-email">james@example.com</div></div></div></td>
+                <td><span class="badge verified">Freelancer</span></td>
+                <td>🇳🇬 Nigeria</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">$5,840</td>
+                <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">Mar 2026</td>
+                <td><span class="badge pending">Pending KYC</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing user...')">View</button><button class="act-btn verify" onclick="toast('KYC approved!')">Approve</button><button class="act-btn ban" onclick="toast('User banned!')">Ban</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#ff4444,#c62828)">XY</div><div><div class="u-name">Unknown Spammer</div><div class="u-email">spam@fake.com</div></div></div></td>
+                <td><span class="badge">Unknown</span></td>
+                <td>🌐 VPN</td>
+                <td style="font-family:var(--fm);color:var(--grey);">$0</td>
+                <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">May 2026</td>
+                <td><span class="badge banned">Banned</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing report...')">Report</button><button class="act-btn verify" onclick="toast('User unbanned!')">Unban</button></div></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">MN</div><div><div class="u-name">Maria Nguyen</div><div class="u-email">maria@example.com</div></div></div></td>
+                <td><span class="badge verified">Freelancer</span></td>
+                <td>🇻🇳 Vietnam</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">$14,200</td>
+                <td style="font-size:0.72rem;font-family:var(--fm);color:var(--grey);">Dec 2025</td>
+                <td><span class="badge active">Active</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing user...')">View</button><button class="act-btn warn" onclick="toast('Warning sent!')">Warn</button><button class="act-btn ban" onclick="toast('User banned!')">Ban</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GIGS ══ -->
+    <div class="pg" id="pg-gigs">
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">Gig Approval Queue (5 Pending)</div><div class="card-act">Approve All ›</div></div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Gig Title</th><th>Freelancer</th><th>Category</th><th>Price</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-size:0.78rem;max-width:200px;">Pi Network SDK Integration Service</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#8b30ff,#4a148c)">KM</div>Kwame M.</div></td>
+                <td style="font-size:0.72rem;color:var(--grey);">Pi Network</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">From $120</td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">2hr ago</td>
+                <td><span class="badge pending">Pending</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Previewing gig...')">Preview</button><button class="act-btn approve" onclick="toast('Gig approved!')">Approve</button><button class="act-btn ban" onclick="toast('Gig rejected!')">Reject</button></div></td>
+              </tr>
+              <tr>
+                <td style="font-size:0.78rem;max-width:200px;">Advanced DeFi Yield Farming Contract</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>Alex K.</div></td>
+                <td style="font-size:0.72rem;color:var(--grey);">Smart Contract</td>
+                <td style="font-family:var(--fm);color:var(--cyan);">From $500</td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">5hr ago</td>
+                <td><span class="badge pending">Pending</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Previewing gig...')">Preview</button><button class="act-btn approve" onclick="toast('Gig approved!')">Approve</button><button class="act-btn ban" onclick="toast('Gig rejected!')">Reject</button></div></td>
+              </tr>
+              <tr>
+                <td style="font-size:0.78rem;max-width:200px;">Crypto Pump Signals — GUARANTEED</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#ff4444,#c62828)">SP</div>Spam User</div></td>
+                <td style="font-size:0.72rem;color:var(--grey);">Crypto Marketing</td>
+                <td style="font-family:var(--fm);color:var(--red);">From $5</td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">1day ago</td>
+                <td><span class="badge banned">Flagged 🚨</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Reviewing flagged gig...')">Review</button><button class="act-btn ban" onclick="toast('Gig + User banned!')">Ban All</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DISPUTES ══ -->
+    <div class="pg" id="pg-disputes">
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <div class="scard orange" style="flex:1;min-width:150px;padding:1.1rem;">
+          <div class="sc-lbl">Open Disputes</div><div class="sc-val" style="font-size:1.4rem;color:var(--orange);">3</div>
+        </div>
+        <div class="scard green" style="flex:1;min-width:150px;padding:1.1rem;">
+          <div class="sc-lbl">Resolved (Month)</div><div class="sc-val" style="font-size:1.4rem;">28</div>
+        </div>
+        <div class="scard cyan" style="flex:1;min-width:150px;padding:1.1rem;">
+          <div class="sc-lbl">Avg Resolution</div><div class="sc-val" style="font-size:1.4rem;">2.4d</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">Active Disputes</div></div>
+        <div class="dispute-card">
+          <div class="dsp-hdr">
+            <div><div class="dsp-id">DISPUTE #DSP-0841 • Filed 2hr ago</div><div class="dsp-title">Smart Contract Development — Incomplete Delivery Claim</div></div>
+            <span class="badge dispute">OPEN</span>
+          </div>
+          <div class="dsp-meta">
+            <strong>Client:</strong> Luna M. — Claims contract was not delivered as agreed<br>
+            <strong>Freelancer:</strong> Alex K. — Claims full contract delivered with documentation<br>
+            <strong>Amount in Escrow:</strong> $400 USDT | <strong>Order:</strong> #W3W-2841
+          </div>
+          <div class="dsp-actions">
+            <button class="dsp-btn freelancer" onclick="toast('Releasing to Alex K...')">✓ Side with Freelancer</button>
+            <button class="dsp-btn client" onclick="toast('Refunding Luna M...')">↩ Refund Client</button>
+            <button class="dsp-btn close" onclick="toast('Requesting more evidence...')">📎 Request Evidence</button>
+          </div>
+        </div>
+        <div class="dispute-card">
+          <div class="dsp-hdr">
+            <div><div class="dsp-id">DISPUTE #DSP-0839 • Filed 1day ago</div><div class="dsp-title">NFT Collection — Quality Not as Advertised</div></div>
+            <span class="badge dispute">OPEN</span>
+          </div>
+          <div class="dsp-meta">
+            <strong>Client:</strong> David K. — NFT art quality does not match portfolio samples<br>
+            <strong>Freelancer:</strong> Maria N. — Delivered exactly as per brief discussion<br>
+            <strong>Amount in Escrow:</strong> 1,200 Pi | <strong>Order:</strong> #W3W-2836
+          </div>
+          <div class="dsp-actions">
+            <button class="dsp-btn freelancer" onclick="toast('Releasing to Maria N...')">✓ Side with Freelancer</button>
+            <button class="dsp-btn client" onclick="toast('Refunding David K...')">↩ Refund Client</button>
+            <button class="dsp-btn close" onclick="toast('Split decision: 50/50')">⚖️ Split Decision</button>
+          </div>
+        </div>
+        <div class="dispute-card" style="border-color:rgba(0,230,118,0.2);">
+          <div class="dsp-hdr">
+            <div><div class="dsp-id">DISPUTE #DSP-0835 • Filed 3days ago</div><div class="dsp-title">Telegram Bot — Not Functional</div></div>
+            <span class="badge resolved">RESOLVED</span>
+          </div>
+          <div class="dsp-meta">
+            <strong>Resolution:</strong> Freelancer delivered updated bot. Client approved. Funds released.<br>
+            <strong>Amount:</strong> $180 USDT released to Fatima H. | <strong>Order:</strong> #W3W-2829
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TRANSACTIONS ══ -->
+    <div class="pg" id="pg-transactions">
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">All Transactions</div><div class="card-act">Export ›</div></div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>TX Hash</th><th>From</th><th>To</th><th>Amount</th><th>Chain</th><th>Type</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">0x4a2f...9c3d</td>
+                <td style="font-size:0.75rem;">Luna M.</td>
+                <td style="font-size:0.75rem;">Escrow Contract</td>
+                <td style="font-family:var(--fd);color:var(--cyan);font-size:0.78rem;">$400 USDT</td>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">TRC-20</td>
+                <td><span class="badge pending">Escrow</span></td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">May 23</td>
+                <td><span class="badge active">Confirmed</span></td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">pi_7b1e...2a8f</td>
+                <td style="font-size:0.75rem;">David K.</td>
+                <td style="font-size:0.75rem;">Escrow Contract</td>
+                <td style="font-family:var(--fd);color:var(--purple2);font-size:0.78rem;">1,200 Pi</td>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">Pi Net</td>
+                <td><span class="badge pending">Escrow</span></td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">May 22</td>
+                <td><span class="badge active">Confirmed</span></td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">0x2c9a...5e7b</td>
+                <td style="font-size:0.75rem;">Rahul P.</td>
+                <td style="font-size:0.75rem;">Alex K.</td>
+                <td style="font-family:var(--fd);color:var(--green);font-size:0.78rem;">$150 USDT</td>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">ERC-20</td>
+                <td><span class="badge verified">Released</span></td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">May 20</td>
+                <td><span class="badge active">Confirmed</span></td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">sol_8d3f...1c4e</td>
+                <td style="font-size:0.75rem;">Fatima H.</td>
+                <td style="font-size:0.75rem;">Personal Wallet</td>
+                <td style="font-family:var(--fd);color:var(--orange);font-size:0.78rem;">2.5 SOL</td>
+                <td style="font-family:var(--fm);font-size:0.65rem;color:var(--grey);">Solana</td>
+                <td><span class="badge">Withdraw</span></td>
+                <td style="font-size:0.68rem;font-family:var(--fm);color:var(--grey);">May 18</td>
+                <td><span class="badge active">Confirmed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANNOUNCEMENTS ══ -->
+    <div class="pg" id="pg-announce">
+      <div class="gridEq">
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Send Announcement</div></div>
+          <div class="ann-form">
+            <div>
+              <label style="font-size:0.6rem;font-family:var(--fm);color:var(--grey);letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Target Audience</label>
+              <div class="ann-type-row">
+                <span class="ann-type sel" onclick="this.classList.toggle('sel')">All Users</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">Freelancers</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">Clients</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">Pro Users</span>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.6rem;font-family:var(--fm);color:var(--grey);letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Announcement Type</label>
+              <div class="ann-type-row">
+                <span class="ann-type sel" onclick="this.classList.toggle('sel')">📢 Info</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">⚠️ Warning</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">🔥 Promotion</span>
+                <span class="ann-type" onclick="this.classList.toggle('sel')">🚨 Critical</span>
+              </div>
+            </div>
+            <input type="text" class="ann-input" placeholder="Announcement Title...">
+            <textarea class="ann-textarea" placeholder="Write your announcement message here..."></textarea>
+            <select class="ann-select">
+              <option>Send via Push Notification + Email</option>
+              <option>Push Notification Only</option>
+              <option>Email Only</option>
+              <option>In-App Banner Only</option>
+            </select>
+            <button class="send-btn" onclick="toast('📢 Announcement sent to 52,200 users!')">📢 SEND ANNOUNCEMENT</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Recent Announcements</div></div>
+          <div class="act-feed">
+            <div class="act-item">
+              <div class="act-ico cyan">📢</div>
+              <div class="act-text"><strong>Platform Update v2.1</strong> — New AI matching system deployed. Sent to 52,200 users.</div>
+              <div class="act-time">May 20</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico purple">🔥</div>
+              <div class="act-text"><strong>Pi Network Integration Live!</strong> — Pi payments now fully operational. 28K reached.</div>
+              <div class="act-time">May 15</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico orange">⚠️</div>
+              <div class="act-text"><strong>Maintenance Notice</strong> — Scheduled maintenance May 10, 2AM UTC. 52K notified.</div>
+              <div class="act-time">May 9</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico green">🎉</div>
+              <div class="act-text"><strong>50,000 Users Milestone!</strong> — Celebration promo: 0% fees this weekend.</div>
+              <div class="act-time">May 1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECURITY ══ -->
+    <div class="pg" id="pg-security">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Security Alerts</div><div class="card-act" style="color:var(--red);">1 Critical</div></div>
+          <div class="act-feed">
+            <div class="act-item">
+              <div class="act-ico red">🚨</div>
+              <div class="act-text"><strong>Brute Force Attack Detected</strong> — IP 192.168.x.x blocked. 847 failed login attempts on user #4821.</div>
+              <div class="act-time">14m</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico orange">⚠️</div>
+              <div class="act-text"><strong>Unusual Withdrawal Pattern</strong> — User #3842 attempted 12 withdrawals in 1 hour. Flagged.</div>
+              <div class="act-time">1hr</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico cyan">🔍</div>
+              <div class="act-text"><strong>New VPN Registrations</strong> — 24 accounts created via VPN in last 6 hours. AI screening active.</div>
+              <div class="act-time">3hr</div>
+            </div>
+            <div class="act-item">
+              <div class="act-ico green">✅</div>
+              <div class="act-text"><strong>SQL Injection Attempt Blocked</strong> — WAF successfully blocked attack on /api/users endpoint.</div>
+              <div class="act-time">5hr</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Security Settings</div></div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+              <div><div style="font-size:0.8rem;font-weight:600;">Rate Limiting</div><div style="font-size:0.68rem;color:var(--grey);">100 req/min per IP</div></div>
+              <div style="width:36px;height:20px;background:var(--green);border-radius:100px;cursor:pointer;position:relative;"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;right:2px;top:2px;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+              <div><div style="font-size:0.8rem;font-weight:600;">2FA Required</div><div style="font-size:0.68rem;color:var(--grey);">For all withdrawals</div></div>
+              <div style="width:36px;height:20px;background:var(--green);border-radius:100px;cursor:pointer;position:relative;"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;right:2px;top:2px;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+              <div><div style="font-size:0.8rem;font-weight:600;">AI Scam Detection</div><div style="font-size:0.68rem;color:var(--grey);">Real-time monitoring</div></div>
+              <div style="width:36px;height:20px;background:var(--green);border-radius:100px;cursor:pointer;position:relative;"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;right:2px;top:2px;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;">
+              <div><div style="font-size:0.8rem;font-weight:600;">VPN Block</div><div style="font-size:0.68rem;color:var(--grey);">Block registrations from VPNs</div></div>
+              <div style="width:36px;height:20px;background:rgba(255,255,255,0.15);border-radius:100px;cursor:pointer;position:relative;" onclick="toast('VPN block enabled!')"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;left:2px;top:2px;opacity:0.5;"></div></div>
+            </div>
+            <button class="send-btn" style="margin-top:0.5rem;" onclick="toast('Security settings saved!')">💾 SAVE SETTINGS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="pg" id="pg-settings">
+      <div class="gridEq">
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Platform Settings</div></div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div class="fi"><label class="fl">Platform Fee (%)</label><input type="text" class="finput" value="10" placeholder="10"></div>
+            <div class="fi"><label class="fl">Pi Network Fee Discount (%)</label><input type="text" class="finput" value="2" placeholder="2"></div>
+            <div class="fi"><label class="fl">Min Withdrawal Amount (USDT)</label><input type="text" class="finput" value="10" placeholder="10"></div>
+            <div class="fi"><label class="fl">Max Gigs per Freelancer</label><input type="text" class="finput" value="20" placeholder="20"></div>
+            <div class="fi"><label class="fl">Escrow Release Window (days)</label><input type="text" class="finput" value="3" placeholder="3"></div>
+            <button class="send-btn" onclick="toast('Settings saved successfully!')">💾 SAVE SETTINGS</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-ttl">Email & Notification Settings</div></div>
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div class="fi"><label class="fl">SMTP Server</label><input type="text" class="finput" value="smtp.web3weapon.io" placeholder="SMTP server"></div>
+            <div class="fi"><label class="fl">Support Email</label><input type="text" class="finput" value="support@web3weapon.io"></div>
+            <div class="fi"><label class="fl">Admin Email</label><input type="text" class="finput" value="admin@web3weapon.io"></div>
+            <div class="fi"><label class="fl">Telegram Bot Token</label><input type="password" class="finput" value="••••••••••••••••"></div>
+            <div class="fi"><label class="fl">Push Notification API Key</label><input type="password" class="finput" value="••••••••••••••••"></div>
+            <button class="send-btn" onclick="toast('Notification settings saved!')">💾 SAVE SETTINGS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div class="pg" id="pg-analytics">
+      <div class="stats-row">
+        <div class="scard cyan"><div class="sc-lbl">Page Views</div><div class="sc-val" style="font-size:1.5rem;">1.2M</div><div class="sc-chg up">▲ 34% this month</div></div>
+        <div class="scard purple"><div class="sc-lbl">Conversion Rate</div><div class="sc-val" style="font-size:1.5rem;">8.4%</div><div class="sc-chg up">▲ 1.2% improvement</div></div>
+        <div class="scard green"><div class="sc-lbl">Avg Session Time</div><div class="sc-val" style="font-size:1.5rem;">12m</div><div class="sc-chg up">▲ 3min increase</div></div>
+        <div class="scard orange"><div class="sc-lbl">Bounce Rate</div><div class="sc-val" style="font-size:1.5rem;">24%</div><div class="sc-chg up">▼ 5% decrease</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">Traffic Overview (Last 7 Days)</div></div>
+        <div class="chart-bars" style="height:140px;">
+          <div class="bar-w"><div class="bar cyan-b" style="height:60%" data-v="142K"></div><div class="bar-lbl">Mon</div></div>
+          <div class="bar-w"><div class="bar cyan-b" style="height:75%" data-v="178K"></div><div class="bar-lbl">Tue</div></div>
+          <div class="bar-w"><div class="bar cyan-b" style="height:90%" data-v="214K"></div><div class="bar-lbl">Wed</div></div>
+          <div class="bar-w"><div class="bar cyan-b" style="height:70%" data-v="166K"></div><div class="bar-lbl">Thu</div></div>
+          <div class="bar-w"><div class="bar cyan-b" style="height:95%" data-v="226K"></div><div class="bar-lbl">Fri</div></div>
+          <div class="bar-w"><div class="bar green-b" style="height:85%" data-v="202K"></div><div class="bar-lbl">Sat</div></div>
+          <div class="bar-w"><div class="bar purple-b" style="height:65%" data-v="154K"></div><div class="bar-lbl">Sun</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REVENUE ══ -->
+    <div class="pg" id="pg-revenue">
+      <div class="stats-row">
+        <div class="scard green"><div class="sc-lbl">Today's Revenue</div><div class="sc-val" style="font-size:1.5rem;">$3.8K</div><div class="sc-chg up">▲ 12% vs yesterday</div></div>
+        <div class="scard cyan"><div class="sc-lbl">This Month</div><div class="sc-val" style="font-size:1.5rem;">$98.4K</div><div class="sc-chg up">▲ 18% vs last month</div></div>
+        <div class="scard purple"><div class="sc-lbl">Platform Fees Collected</div><div class="sc-val" style="font-size:1.5rem;">$842K</div><div class="sc-chg up">▲ All time total</div></div>
+        <div class="scard orange"><div class="sc-lbl">Pending Payouts</div><div class="sc-val" style="font-size:1.5rem;">$24K</div><div class="sc-chg dn">▼ In escrow</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">Monthly Revenue Breakdown</div><div class="card-act">Export Report ›</div></div>
+        <div class="chart-bars" style="height:140px;">
+          <div class="bar-w"><div class="bar green-b" style="height:40%" data-v="$42K"></div><div class="bar-lbl">Jan</div></div>
+          <div class="bar-w"><div class="bar green-b" style="height:52%" data-v="$54K"></div><div class="bar-lbl">Feb</div></div>
+          <div class="bar-w"><div class="bar green-b" style="height:61%" data-v="$64K"></div><div class="bar-lbl">Mar</div></div>
+          <div class="bar-w"><div class="bar green-b" style="height:55%" data-v="$57K"></div><div class="bar-lbl">Apr</div></div>
+          <div class="bar-w"><div class="bar cyan-b" style="height:94%" data-v="$98K"></div><div class="bar-lbl">May</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ORDERS ══ -->
+    <div class="pg" id="pg-orders">
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl">All Orders</div><div class="card-act">Export ›</div></div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr><th>Order ID</th><th>Client</th><th>Freelancer</th><th>Service</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.68rem;color:var(--cyan);">#W3W-2841</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">LM</div>Luna M.</div></td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#8b30ff,#00f5ff)">AK</div>Alex K.</div></td>
+                <td style="font-size:0.75rem;color:var(--grey);">Smart Contract Dev</td>
+                <td style="font-family:var(--fd);color:var(--cyan);font-size:0.8rem;">$400 USDT</td>
+                <td><span class="badge pending">In Progress</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing order details...')">View</button></div></td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.68rem;color:var(--cyan);">#W3W-2836</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#00b4d8,#03045e)">DK</div>David K.</div></td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#ff6b35,#f7c59f)">MN</div>Maria N.</div></td>
+                <td style="font-size:0.75rem;color:var(--grey);">NFT Collection</td>
+                <td style="font-family:var(--fd);color:var(--purple2);font-size:0.8rem;">1,200 Pi</td>
+                <td><span class="badge dispute">Dispute</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing dispute...')">View</button><button class="act-btn warn" onclick="showPage('disputes',null)">Resolve</button></div></td>
+              </tr>
+              <tr>
+                <td style="font-family:var(--fm);font-size:0.68rem;color:var(--cyan);">#W3W-2829</td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#00c851,#007e33)">RP</div>Rahul P.</div></td>
+                <td><div class="user-cell"><div class="u-av" style="background:linear-gradient(135deg,#9c27b0,#4a148c)">FH</div>Fatima H.</div></td>
+                <td style="font-size:0.75rem;color:var(--grey);">Telegram Bot</td>
+                <td style="font-family:var(--fd);color:var(--green);font-size:0.8rem;">$180 USDT</td>
+                <td><span class="badge active">Completed</span></td>
+                <td><div class="act-btns"><button class="act-btn view" onclick="toast('Viewing order...')">View</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ADD USER MODAL -->
+<div class="modal-ov" id="banModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeBanModal()">×</div>
+    <div class="modal-ttl">👤 User Management</div>
+    <div class="modal-sub">Add new admin user or manage existing accounts</div>
+    <div class="frow">
+      <div class="fi"><label class="fl">Full Name</label><input type="text" class="finput" placeholder="Full name"></div>
+      <div class="fi"><label class="fl">Username</label><input type="text" class="finput" placeholder="@username"></div>
+    </div>
+    <div class="fi"><label class="fl">Email</label><input type="email" class="finput" placeholder="admin@example.com"></div>
+    <div class="frow">
+      <div class="fi"><label class="fl">Role</label>
+        <select class="finput"><option>Admin</option><option>Moderator</option><option>Support</option></select>
+      </div>
+      <div class="fi"><label class="fl">Access Level</label>
+        <select class="finput"><option>Full Access</option><option>Read Only</option><option>Limited</option></select>
+      </div>
+    </div>
+    <div class="fi"><label class="fl">Temporary Password</label><input type="password" class="finput" placeholder="Set temporary password"></div>
+    <button class="send-btn" style="width:100%;" onclick="toast('Admin user created!');closeBanModal()">✓ CREATE ADMIN USER</button>
+  </div>
+</div>
+
+<button class="mob-tog" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+<div id="toast"></div>
+
+<script>
+// COUNTERS
+function animateVal(id,target,prefix='',suffix='') {
+  const el = document.getElementById(id); if(!el) return;
+  let count = 0; const step = target/60;
+  const t = setInterval(() => {
+    count = Math.min(count+step,target);
+    const val = target>1000 ? Math.floor(count).toLocaleString() : Math.floor(count);
+    el.textContent = prefix+val+suffix;
+    if(count>=target) clearInterval(t);
+  },20);
+}
+setTimeout(() => {
+  animateVal('sc1',52200);
+  animateVal('sc2',98400,'$');
+  animateVal('sc3',3);
+  animateVal('sc4',5);
+},300);
+
+// PAGE NAVIGATION
+function showPage(id, navEl) {
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('pg-'+id);
+  if(pg) pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('pageTitle').textContent = {
+    overview:'Dashboard Overview',analytics:'Analytics',revenue:'Revenue',
+    users:'User Management',gigs:'Gig Management',orders:'Order Management',
+    disputes:'Dispute Resolution',transactions:'Transactions',
+    announce:'Announcements',security:'Security Center',settings:'Settings'
+  }[id] || 'Dashboard';
+}
+
+// MODAL
+function openBanModal(){document.getElementById('banModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeBanModal(){document.getElementById('banModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('banModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeBanModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeBanModal();});
+
+// TOAST
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = '✓ '+msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(()=>el.style.transform='translateX(-50%) translateY(100px)',2800);
+}
+
+// ANIMATE BARS
+setTimeout(()=>{
+  document.querySelectorAll('.bar').forEach(b=>{
+    const h=b.style.height; b.style.height='0';
+    setTimeout(()=>b.style.height=h,200);
+  });
+},400);
+</script>
+</body>
+</html>
